@@ -1,0 +1,96 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block title %}Convert {{ user.username }} to Professional{% endblock %}
+{% block page_title %}Convert to Professional{% endblock %}
+{% block body_data %}data-use-modal="true"{% endblock %}
+{% block modal_title %}Convert to Professional{% endblock %}
+{% block modal_cancel_url %}{% url 'custom_admin:user_detail' user.pk %}{% endblock %}
+
+{% block modal_content %}
+<!-- Mini user info banner -->
+<div class="p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 mb-5 grid grid-cols-2 gap-3 text-sm">
+    <div>
+        <span class="text-slate-500 text-xs uppercase tracking-wider">Username</span>
+        <p class="text-purple-400 font-semibold">{{ user.username }}</p>
+    </div>
+    <div>
+        <span class="text-slate-500 text-xs uppercase tracking-wider">Email</span>
+        <p class="text-white">{{ user.email }}</p>
+    </div>
+    <div>
+        <span class="text-slate-500 text-xs uppercase tracking-wider">Current Role</span>
+        <span class="text-xs font-bold uppercase px-2 py-0.5 rounded bg-blue-500/20 text-blue-400">Customer</span>
+    </div>
+    <div>
+        <span class="text-slate-500 text-xs uppercase tracking-wider">Member Since</span>
+        <p class="text-white">{{ user.date_joined|date:"M d, Y" }}</p>
+    </div>
+</div>
+
+<form method="post" class="space-y-4">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="p-3 rounded-lg bg-rose-500/20 border border-rose-500/50 text-rose-400 text-sm">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    {% for field in form %}
+        {% if field.name != 'user' %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                    {{ field.label }}{% if field.field.required %}<span class="text-rose-400 ml-1">*</span>{% endif %}
+                </label>
+
+                {% if field.field.widget.input_type == 'select' %}
+                    <select name="{{ field.name }}" id="{{ field.id_for_label }}"
+                            {% if field.field.required %}required{% endif %}>
+                        {% for value, text in field.field.choices %}
+                            <option value="{{ value }}" {% if field.value == value %}selected{% endif %}>{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                {% elif field.field.widget.input_type == 'checkbox' %}
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" name="{{ field.name }}" id="{{ field.id_for_label }}"
+                               {% if field.value %}checked{% endif %}
+                               class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-purple-500">
+                        <label for="{{ field.id_for_label }}" class="text-slate-300 text-sm normal-case tracking-normal">{{ field.help_text }}</label>
+                    </div>
+                {% elif field.name == 'bio' or field.name == 'address' %}
+                    <textarea name="{{ field.name }}" id="{{ field.id_for_label }}"
+                              rows="{% if field.name == 'bio' %}3{% else %}2{% endif %}"
+                              {% if field.field.required %}required{% endif %}
+                              placeholder="{{ field.label }}">{{ field.value|default:'' }}</textarea>
+                {% else %}
+                    <input type="{{ field.field.widget.input_type|default:'text' }}"
+                           name="{{ field.name }}" id="{{ field.id_for_label }}"
+                           value="{{ field.value|default:'' }}"
+                           {% if field.field.required %}required{% endif %}
+                           placeholder="{{ field.label }}">
+                {% endif %}
+
+                {% if field.errors %}
+                    <p class="mt-1 text-xs text-rose-400">{{ field.errors.0 }}</p>
+                {% elif field.help_text and field.field.widget.input_type != 'checkbox' %}
+                    <p class="mt-1 text-xs text-slate-500">{{ field.help_text }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    <div class="flex gap-3 justify-end pt-4 border-t border-slate-800/50">
+        <a href="{% url 'custom_admin:user_detail' user.pk %}"
+           class="px-6 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-semibold text-sm hover:bg-slate-700 transition-colors">
+            Cancel
+        </a>
+        <button type="submit"
+                class="px-6 py-2.5 rounded-xl gradient-primary text-white font-semibold text-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Convert to Professional
+        </button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Professional Header -->
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8 mb-8">
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                <!-- Avatar -->
+                <div class="w-32 h-32 rounded-2xl gradient-primary flex items-center justify-center text-5xl font-bold text-white shrink-0">
+                    {{ professional.user.username|slice:":1"|upper }}
+                </div>
+                
+                <!-- Info -->
+                <div class="flex-1">
+                    <div class="flex flex-wrap items-center gap-4 mb-4">
+                        <h1 class="font-boa text-3xl md:text-4xl text-gradient">{{ professional.user.username }}</h1>
+                        <span class="px-4 py-1 rounded-full bg-purple-500/20 text-purple-400 text-sm font-medium">
+                            {{ professional.get_professional_type_display }}
+                        </span>
+                        {% if professional.is_available %}
+                        <span class="px-4 py-1 rounded-full bg-green-500/20 text-green-400 text-sm font-medium">
+                            Available
+                        </span>
+                        {% else %}
+                        <span class="px-4 py-1 rounded-full bg-red-500/20 text-red-400 text-sm font-medium">
+                            Busy
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <p class="text-slate-300 mb-6">{{ professional.bio }}</p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                            <p class="text-slate-500">Experience</p>
+                            <p class="text-white font-semibold">{{ professional.experience_years }} years</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500">Phone</p>
+                            <p class="text-white font-semibold">{{ professional.phone }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="text-slate-500">Address</p>
+                            <p class="text-white font-semibold">{{ professional.address }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Portfolio -->
+                <div class="animate-item">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Portfolio</h2>
+                    {% if portfolios %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {% for portfolio in portfolios %}
+                        <div class="group bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden hover:border-purple-500/50 transition-all duration-500">
+                            <div class="h-48 bg-slate-700 overflow-hidden">
+                                {% if portfolio.image %}
+                                <img src="{{ portfolio.image.url }}" alt="{{ portfolio.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                {% else %}
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <svg class="w-12 h-12 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="p-4">
+                                <h4 class="font-semibold text-white">{{ portfolio.title }}</h4>
+                                <p class="text-slate-400 text-sm mt-1">{{ portfolio.description|truncatewords:15 }}</p>
+                                <p class="text-purple-400 text-xs mt-2">{{ portfolio.project_date }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8 bg-slate-800/30 rounded-2xl border border-slate-700/50">
+                        <p class="text-slate-400">No portfolio items yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Sidebar - Services -->
+            <div class="lg:col-span-1">
+                <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6 sticky top-24">
+                    <h2 class="text-xl font-semibold text-white mb-6">Services & Pricing</h2>
+                    
+                    {% if pricings %}
+                    <div class="space-y-4">
+                        {% for pricing in pricings %}
+                        <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300">
+                            <div class="flex items-start justify-between mb-2">
+                                <h4 class="font-semibold text-white">{{ pricing.service_name }}</h4>
+                                <span class="px-2 py-1 text-xs rounded-full 
+                                    {% if pricing.budget_level == 'low' %}bg-green-500/20 text-green-400{% elif pricing.budget_level == 'medium' %}bg-blue-500/20 text-blue-400{% else %}bg-purple-500/20 text-purple-400{% endif %}">
+                                    {{ pricing.get_budget_level_display }}
+                                </span>
+                            </div>
+                            <p class="text-slate-400 text-sm mb-3">{{ pricing.description|truncatewords:10 }}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl font-bold text-gradient">₹{{ pricing.price }}</span>
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'bookings:create_booking' professional.id pricing.id %}" class="px-4 py-2 rounded-lg gradient-primary text-white text-sm font-medium hover:opacity-90 transition-all duration-300">
+                                    Book Now
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-slate-400 text-center py-4">No services available.</p>
+                    {% endif %}
+                    
+                    {% if not user.is_authenticated %}
+                    <div class="mt-6 p-4 rounded-xl bg-purple-500/10 border border-purple-500/30">
+                        <p class="text-purple-300 text-sm text-center">
+                            <a href="{% url 'users:login' %}" class="underline">Login</a> to book services
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(100),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}

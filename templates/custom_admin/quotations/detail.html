@@ -1,0 +1,26 @@
+{% extends 'custom_admin/base_admin.html' %}
+{% block page_title %}Quotation Details{% endblock %}
+{% block content %}
+<div class="detail-view">
+    <div class="detail-header">
+        <h2>{{ quotation.project_title }}</h2>
+        <a href="{% url 'custom_admin:quotation_list' %}" class="btn btn-secondary">Back</a>
+    </div>
+    <div class="detail-section">
+        <p><strong>User:</strong> {{ quotation.user.username }}</p>
+        <p><strong>Budget:</strong> ₹{{ quotation.budget_estimate }}</p>
+        <p><strong>Status:</strong> <span class="status-badge status-{{ quotation.status }}">{{ quotation.get_status_display }}</span></p>
+        <p><strong>Description:</strong> {{ quotation.project_description }}</p>
+        
+        <h3 style="margin-top:20px;">Items</h3>
+        <table>
+            <thead><tr><th>Item</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead>
+            <tbody>
+                {% for i in items %}
+                <tr><td>{{ i.item_name }}</td><td>{{ i.quantity }}</td><td>₹{{ i.unit_price }}</td><td>₹{{ i.total_price }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

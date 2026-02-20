@@ -1,0 +1,377 @@
+/* Global Design System & Variables */
+:root {
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    --surface-dark: #020617;
+    --surface-light: #1e293b;
+    --glass-bg: rgba(30, 41, 59, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-color: #8b5cf6;
+}
+
+/* Base Resets & Typography */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--surface-dark);
+}
+
+/* Common Utilities */
+.glass-panel, .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+}
+
+.gradient-primary {
+    background: var(--primary-gradient);
+}
+
+.gradient-text {
+    background: var(--primary-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.font-boa {
+    font-family: 'BoaConstruktorBold', sans-serif;
+}
+
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Layout Containers */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* UI Components - Modernized */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Forms - Modern Glass Style */
+input, textarea, select {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-primary) !important;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+    background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* Tables - Transparent & Modern */
+table {
+    width: 100%;
+    background: transparent;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 1.5rem 0;
+}
+
+th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-primary);
+}
+
+tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Alert Messages */
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(8px);
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.alert-error {
+    background: rgba(244, 63, 94, 0.1);
+    border: 1px solid rgba(244, 63, 94, 0.2);
+    color: #fb7185;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+
+/* Remove spinners from number inputs */
+.no-spinner::-webkit-inner-spin-button, 
+.no-spinner::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+.no-spinner {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GLOBAL SKELETON LOADING SYSTEM  v2
+   Usage:  <div class="sk sk-rect" style="--sk-w:100%;--sk-h:180px;--sk-r:1rem"></div>
+           <div class="sk sk-circle" style="--sk-w:56px;--sk-h:56px"></div>
+           <div class="sk sk-text" style="--sk-w:60%;--sk-h:14px"></div>
+   Shapes: sk-rect | sk-square | sk-circle | sk-round | sk-text
+══════════════════════════════════════════════════════════════ */
+
+/* Shimmer wave — OPAQUE slate colors so Tailwind/CDN cannot bleed through */
+@keyframes sk-shimmer {
+    0%   { background-position: -900px 0; }
+    100% { background-position:  900px 0; }
+}
+
+/* ── Base block: fully opaque dark palette ── */
+.sk {
+    display: block !important;
+    width:  var(--sk-w, 100%);
+    height: var(--sk-h, 16px);
+    border-radius: var(--sk-r, 0.5rem);
+    /* three solid slate stops — no transparency */
+    background-color: #1e293b;
+    background-image: linear-gradient(
+        90deg,
+        #1e293b  0%,
+        #1e293b  30%,
+        #334155  48%,
+        #475569  50%,
+        #334155  52%,
+        #1e293b  70%,
+        #1e293b  100%
+    );
+    background-size: 900px 100%;
+    animation: sk-shimmer 1.8s linear infinite;
+    flex-shrink: 0;
+    /* reset anything Tailwind might set */
+    color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* ── Shape modifiers ── */
+.sk-circle { border-radius: 50%  !important; }
+.sk-round  { border-radius: 999px !important; }
+.sk-square { border-radius: 0.75rem !important; }
+.sk-rect   { border-radius: var(--sk-r, 0.75rem) !important; }
+.sk-text   { border-radius: 4px !important; }
+
+/* ── sk-section: the host wrapper ── */
+.sk-section { position: relative; }
+
+/* Placeholder shown by default; JS removes it */
+.sk-placeholder { display: block; }
+.sk-placeholder.sk-hide { display: none !important; }
+
+/*
+  sk-content: JS sets style.display on these — no CSS display rules here
+  so Tailwind's .grid class cannot fight us.
+  We only control opacity for the fade-in.
+*/
+.sk-content {
+    opacity: 0;
+    transition: opacity 0.45s ease;
+}
+.sk-content.sk-visible {
+    opacity: 1;
+}
+
+/* ── Page-level loading bar (top of viewport) ── */
+#sk-page-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    z-index: 99999;
+    background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+    transition: width 0.3s ease, opacity 0.4s ease;
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(168,85,247,0.6);
+}
+
+/* ── Network/error feedback banner ── */
+.sk-offline-banner {
+    position: fixed;
+    top: 4.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-140%);
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1.4rem;
+    border-radius: 999px;
+    background: #1e0a0a;
+    border: 1px solid #7f1d1d;
+    color: #fca5a5;
+    font-size: 0.85rem;
+    font-weight: 600;
+    backdrop-filter: blur(14px);
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 4px 24px rgba(244,63,94,0.2);
+}
+.sk-offline-banner.sk-offline-visible {
+    transform: translateX(-50%) translateY(0);
+}
+.sk-offline-banner .sk-offline-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #f87171;
+    animation: sk-pulse-dot 1s ease infinite;
+    flex-shrink: 0;
+}
+@keyframes sk-pulse-dot {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:0.4; transform:scale(0.7); }
+}
+
+/* ── Retry button inside banner ── */
+.sk-retry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    border: 1px solid #7f1d1d;
+    color: #fca5a5;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    transition: background 0.2s;
+    pointer-events: all;
+    letter-spacing: 0.02em;
+}
+.sk-retry-btn:hover { background: rgba(244,63,94,0.15); }
+
+/* ── Empty state (no results / error) ── */
+.sk-empty {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    border-radius: 1.5rem;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    text-align: center;
+    color: #475569;
+    gap: 1.25rem;
+}
+.sk-empty.sk-empty-visible { display: flex; opacity: 1; }
+
+/* ── Admin page-level skeleton overlay ── */
+.admin-sk-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 8000;
+    background: #020617;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+}
+.admin-sk-overlay.admin-sk-done {
+    opacity: 0;
+}
+.admin-sk-logo-pulse {
+    width: 56px; height: 56px;
+    border-radius: 1rem;
+    background-image: linear-gradient(90deg, #1e293b 0%, #334155 48%, #475569 50%, #334155 52%, #1e293b 100%);
+    background-size: 900px 100%;
+    animation: sk-shimmer 1.8s linear infinite;
+}
+

@@ -1,0 +1,246 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+<div class="glass-panel rounded-3xl overflow-hidden border border-slate-800/50">
+    <div class="px-8 py-6 border-b border-slate-800/50 flex items-center justify-between bg-slate-800/10">
+        <div>
+            <h3 class="text-xl font-bold text-white">All Users</h3>
+            <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">Total: {{ users.count }}</p>
+        </div>
+    </div>
+    
+    <!-- Search -->
+    <div class="px-8 py-4 border-b border-slate-800/50 bg-slate-800/5">
+        <form method="get" class="flex flex-wrap gap-4 items-center">
+            <div class="flex-1 min-w-[250px]">
+                <div class="relative">
+                    <input type="text" name="q" placeholder="Search users (username, email, name)..." value="{{ request.GET.q|default:'' }}"
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-sm">
+                    <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+            </div>
+            {% if request.GET.q %}
+            <a href="{% url 'custom_admin:user_list' %}" class="px-4 py-2.5 rounded-xl bg-slate-700 text-white text-xs font-bold hover:bg-slate-600 transition-colors flex items-center">
+                CLEAR
+            </a>
+            {% endif %}
+        </form>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-800/20">
+                <tr>
+                    <th class="px-8 py-4">ID</th>
+                    <th class="px-8 py-4">Username</th>
+                    <th class="px-8 py-4">Name</th>
+                    <th class="px-8 py-4">Email</th>
+                    <th class="px-8 py-4">Status</th>
+                    <th class="px-8 py-4">Joined</th>
+                    <th class="px-8 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-slate-300 divide-y divide-slate-800/50">
+                {% for user in users %}
+                <tr class="table-row-hover transition-colors" id="user-row-{{ user.id }}">
+                    <td class="px-8 py-4 text-slate-500 text-sm font-mono">#{{ user.id }}</td>
+                    <td class="px-8 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-[10px] font-bold text-white border border-slate-700/50">
+                                {{ user.username|first|upper }}
+                            </div>
+                            <span class="font-medium text-white">{{ user.username }}</span>
+                        </div>
+                    </td>
+                    <td class="px-8 py-4 text-sm">{{ user.first_name }} {{ user.last_name }}</td>
+                    <td class="px-8 py-4 text-sm">{{ user.email }}</td>
+                    <td class="px-8 py-4">
+                        <div class="flex gap-2 flex-wrap">
+                            {% if user.is_superuser %}
+                            <span class="px-2 py-0.5 rounded-md bg-red-500/10 text-red-400 text-[9px] font-bold uppercase tracking-wider border border-red-500/20">Admin</span>
+                            {% elif user.is_staff %}
+                            <span class="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-400 text-[9px] font-bold uppercase tracking-wider border border-purple-500/20">Staff</span>
+                            {% endif %}
+                            {% if user.is_active %}
+                            <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 text-[9px] font-bold uppercase tracking-wider border border-emerald-500/20">Active</span>
+                            {% else %}
+                            <span class="px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 text-[9px] font-bold uppercase tracking-wider border border-rose-500/20">Inactive</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="px-8 py-4 text-sm">{{ user.date_joined|date:"M d, Y" }}</td>
+                    <td class="px-8 py-4 text-right space-x-2">
+                        <a href="{% url 'custom_admin:user_detail' user.id %}" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-800 text-[10px] font-bold text-white hover:bg-slate-700 transition-colors">
+                            VIEW
+                        </a>
+                        <a href="{% url 'custom_admin:user_edit' user.id %}" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-blue-500/10 text-[10px] font-bold text-blue-400 hover:bg-blue-500/20 transition-colors">
+                            EDIT
+                        </a>
+                        {% if not user.is_staff and not user.is_superuser %}
+                        <button onclick="openDeleteModal('{{ user.id }}', '{{ user.username }}')" 
+                            class="inline-flex items-center px-3 py-1.5 rounded-lg bg-rose-500/10 text-[10px] font-bold text-rose-400 hover:bg-rose-500/20 transition-colors">
+                            DELETE
+                        </button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-8 py-12 text-center text-slate-500 italic">No users available in the system</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 z-[100] hidden">
+    <!-- Blurred Backdrop -->
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-md" onclick="closeDeleteModal()"></div>
+    
+    <!-- Modal Content -->
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-md glass-panel rounded-2xl border border-slate-700/50 p-8 shadow-2xl transform transition-all duration-300 scale-95 opacity-0" id="deleteModalContent">
+            <!-- Warning Icon -->
+            <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-rose-500/20 to-red-600/20 border border-rose-500/30 flex items-center justify-center">
+                <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                </svg>
+            </div>
+            
+            <h3 class="text-xl font-bold text-white text-center mb-2">Delete User</h3>
+            <p class="text-slate-400 text-center text-sm mb-2">
+                Are you sure you want to delete user <strong class="text-rose-400" id="deleteUsername"></strong>?
+            </p>
+            <p class="text-rose-400/70 text-center text-xs mb-8 font-medium">
+                ⚠️ This action cannot be undone. All user data will be permanently removed.
+            </p>
+            
+            <!-- Action Buttons -->
+            <div class="flex gap-3">
+                <button onclick="closeDeleteModal()" 
+                    class="flex-1 py-3 px-4 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-all duration-300 font-medium text-sm">
+                    Cancel
+                </button>
+                <button onclick="confirmDelete()" id="confirmDeleteBtn"
+                    class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold text-sm hover:opacity-90 hover:shadow-lg hover:shadow-rose-500/20 transition-all duration-300">
+                    <span id="deleteBtnText">Yes, Delete</span>
+                    <svg id="deleteSpinner" class="hidden w-4 h-4 animate-spin inline ml-2" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let deleteUserId = null;
+    
+    function openDeleteModal(userId, username) {
+        deleteUserId = userId;
+        document.getElementById('deleteUsername').textContent = username;
+        const modal = document.getElementById('deleteModal');
+        const content = document.getElementById('deleteModalContent');
+        
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        });
+    }
+    
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        const content = document.getElementById('deleteModalContent');
+        
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            deleteUserId = null;
+        }, 200);
+    }
+    
+    function confirmDelete() {
+        if (!deleteUserId) return;
+        
+        const btn = document.getElementById('confirmDeleteBtn');
+        const btnText = document.getElementById('deleteBtnText');
+        const spinner = document.getElementById('deleteSpinner');
+        
+        btn.disabled = true;
+        btnText.textContent = 'Deleting...';
+        spinner.classList.remove('hidden');
+        
+        fetch(`/admin/users/${deleteUserId}/delete-ajax/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the row with animation
+                const row = document.getElementById(`user-row-${deleteUserId}`);
+                if (row) {
+                    row.style.transition = 'all 0.3s ease';
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(-20px)';
+                    setTimeout(() => row.remove(), 300);
+                }
+                closeDeleteModal();
+                
+                // Show success toast
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.error || 'Failed to delete user', 'error');
+            }
+        })
+        .catch(error => {
+            showToast('An error occurred. Please try again.', 'error');
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btnText.textContent = 'Yes, Delete';
+            spinner.classList.add('hidden');
+        });
+    }
+    
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-6 right-6 z-[200] px-6 py-4 rounded-xl shadow-2xl text-sm font-medium transition-all duration-500 transform translate-x-full ${
+            type === 'success' 
+                ? 'bg-emerald-500/20 border border-emerald-500/50 text-emerald-400' 
+                : 'bg-rose-500/20 border border-rose-500/50 text-rose-400'
+        }`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        requestAnimationFrame(() => {
+            toast.classList.remove('translate-x-full');
+            toast.classList.add('translate-x-0');
+        });
+        
+        setTimeout(() => {
+            toast.classList.remove('translate-x-0');
+            toast.classList.add('translate-x-full');
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+    
+    // Close on Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeDeleteModal();
+    });
+</script>
+{% endblock %}

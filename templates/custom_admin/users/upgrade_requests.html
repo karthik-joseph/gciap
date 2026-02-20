@@ -1,0 +1,95 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block page_title %}Upgrade Requests{% endblock %}
+
+{% block content %}
+<div class="glass-panel rounded-3xl overflow-hidden border border-slate-800/50">
+    <div class="px-8 py-6 border-b border-slate-800/50 flex items-center justify-between bg-slate-800/10">
+        <div>
+            <h3 class="text-xl font-bold text-white">Professional Upgrade Requests</h3>
+            <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">Total: {{ upgrade_requests.count }}</p>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="px-8 py-4 border-b border-slate-800/50 bg-slate-800/5">
+        <form method="get" class="flex flex-wrap gap-4 items-center">
+            <div class="flex-1 min-w-[200px]">
+                <div class="relative">
+                    <input type="text" name="q" placeholder="Search by username, email..." value="{{ request.GET.q|default:'' }}"
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-sm">
+                    <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <a href="{% url 'custom_admin:upgrade_request_list' %}" class="px-3 py-2.5 rounded-xl text-xs font-bold transition-colors {% if not request.GET.status %}bg-purple-500/20 text-purple-400 border border-purple-500/20{% else %}bg-slate-800 text-slate-400 hover:bg-slate-700{% endif %}">
+                    ALL
+                </a>
+                <a href="?status=pending" class="px-3 py-2.5 rounded-xl text-xs font-bold transition-colors {% if request.GET.status == 'pending' %}bg-amber-500/20 text-amber-400 border border-amber-500/20{% else %}bg-slate-800 text-slate-400 hover:bg-slate-700{% endif %}">
+                    PENDING
+                </a>
+                <a href="?status=approved" class="px-3 py-2.5 rounded-xl text-xs font-bold transition-colors {% if request.GET.status == 'approved' %}bg-emerald-500/20 text-emerald-400 border border-emerald-500/20{% else %}bg-slate-800 text-slate-400 hover:bg-slate-700{% endif %}">
+                    APPROVED
+                </a>
+                <a href="?status=rejected" class="px-3 py-2.5 rounded-xl text-xs font-bold transition-colors {% if request.GET.status == 'rejected' %}bg-rose-500/20 text-rose-400 border border-rose-500/20{% else %}bg-slate-800 text-slate-400 hover:bg-slate-700{% endif %}">
+                    REJECTED
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-800/20">
+                <tr>
+                    <th class="px-8 py-4">ID</th>
+                    <th class="px-8 py-4">User</th>
+                    <th class="px-8 py-4">Professional Type</th>
+                    <th class="px-8 py-4">Experience</th>
+                    <th class="px-8 py-4">Status</th>
+                    <th class="px-8 py-4">Submitted</th>
+                    <th class="px-8 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-slate-300 divide-y divide-slate-800/50">
+                {% for req in upgrade_requests %}
+                <tr class="table-row-hover transition-colors">
+                    <td class="px-8 py-4 text-slate-500 text-sm font-mono">#{{ req.id }}</td>
+                    <td class="px-8 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-[10px] font-bold text-white border border-slate-700/50">
+                                {{ req.user.username|first|upper }}
+                            </div>
+                            <div>
+                                <span class="font-medium text-white">{{ req.user.username }}</span>
+                                <p class="text-slate-500 text-xs">{{ req.user.email }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-4 text-sm">{{ req.get_professional_type_display }}</td>
+                    <td class="px-8 py-4 text-sm">{{ req.experience_years }} years</td>
+                    <td class="px-8 py-4">
+                        <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider
+                            {% if req.status == 'pending' %}bg-amber-500/10 text-amber-400 border border-amber-500/20
+                            {% elif req.status == 'approved' %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
+                            {% else %}bg-rose-500/10 text-rose-400 border border-rose-500/20{% endif %}">
+                            {{ req.status }}
+                        </span>
+                    </td>
+                    <td class="px-8 py-4 text-sm">{{ req.created_at|date:"M d, Y" }}</td>
+                    <td class="px-8 py-4 text-right space-x-2">
+                        <a href="{% url 'custom_admin:upgrade_request_detail' req.id %}" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-800 text-[10px] font-bold text-white hover:bg-slate-700 transition-colors">
+                            REVIEW
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-8 py-12 text-center text-slate-500 italic">No upgrade requests found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

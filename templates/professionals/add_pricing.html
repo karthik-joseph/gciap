@@ -1,0 +1,203 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Add Service Pricing - GCIAP{% endblock %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header -->
+        <div class="animate-item text-center mb-10">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 mb-6">
+                <svg class="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h2 class="font-boa text-4xl text-gradient">Add Service Pricing</h2>
+            <p class="mt-3 text-slate-400">Define your service rates so customers can find and book you</p>
+        </div>
+
+        <!-- Budget Level Info Cards -->
+        <div class="animate-item grid grid-cols-3 gap-3 mb-10">
+            <div class="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-center">
+                <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                    <span class="text-emerald-400 text-xs font-bold">₹</span>
+                </div>
+                <h4 class="text-emerald-400 font-semibold text-sm">Low Budget</h4>
+                <p class="text-slate-500 text-[10px] mt-1">Cost-effective options</p>
+            </div>
+            <div class="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 text-center">
+                <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                    <span class="text-blue-400 text-xs font-bold">₹₹</span>
+                </div>
+                <h4 class="text-blue-400 font-semibold text-sm">Medium Budget</h4>
+                <p class="text-slate-500 text-[10px] mt-1">Balanced quality & price</p>
+            </div>
+            <div class="p-4 rounded-xl bg-purple-500/5 border border-purple-500/10 text-center">
+                <div class="w-8 h-8 mx-auto mb-2 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                    <span class="text-purple-400 text-xs font-bold">₹₹₹</span>
+                </div>
+                <h4 class="text-purple-400 font-semibold text-sm">High Budget</h4>
+                <p class="text-slate-500 text-[10px] mt-1">Premium services</p>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8 shadow-2xl">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="p-4 rounded-xl bg-rose-500/20 border border-rose-500/50 text-rose-400 text-sm">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Service Name -->
+                <div>
+                    <label for="id_service_name" class="block text-sm font-bold text-slate-300 mb-2">
+                        Service Name <span class="text-rose-400">*</span>
+                    </label>
+                    <input type="text" name="service_name" id="id_service_name" value="{{ form.service_name.value|default:'' }}"
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
+                        placeholder="e.g. Living Room Interior Design" required>
+                    {% if form.service_name.errors %}
+                        <p class="mt-2 text-sm text-rose-400">{{ form.service_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Budget Level & Price Row -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Budget Level -->
+                    <div>
+                        <label for="id_budget_level" class="block text-sm font-bold text-slate-300 mb-2">
+                            Budget Level <span class="text-rose-400">*</span>
+                        </label>
+                        <select name="budget_level" id="id_budget_level"
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300" required>
+                            <option value="">Select level...</option>
+                            {% for value, text in form.budget_level.field.choices %}
+                                {% if value %}
+                                <option value="{{ value }}" {% if form.budget_level.value == value %}selected{% endif %}>{{ text }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        {% if form.budget_level.errors %}
+                            <p class="mt-2 text-sm text-rose-400">{{ form.budget_level.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Price -->
+                    <div>
+                        <label for="id_price" class="block text-sm font-bold text-slate-300 mb-2">
+                            Price (₹) <span class="text-rose-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₹</span>
+                            <input type="number" name="price" id="id_price" value="{{ form.price.value|default:'' }}"
+                                step="0.01" min="0.01"
+                                class="w-full pl-9 pr-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
+                                placeholder="0.00" required>
+                        </div>
+                        {% if form.price.errors %}
+                            <p class="mt-2 text-sm text-rose-400">{{ form.price.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="id_description" class="block text-sm font-bold text-slate-300 mb-2">
+                        Description <span class="text-rose-400">*</span>
+                    </label>
+                    <textarea name="description" id="id_description" rows="4"
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 resize-none"
+                        placeholder="Describe what this service includes, timeline, materials covered..." required>{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.errors %}
+                        <p class="mt-2 text-sm text-rose-400">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Preview Card -->
+                <div id="previewCard" class="p-5 rounded-xl bg-slate-900/50 border border-slate-700/50">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Live Preview</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-semibold text-white" id="previewName">Service Name</h4>
+                            <span id="previewBadge" class="text-sm px-3 py-1 rounded-full bg-slate-700 text-slate-400 inline-block mt-1">Budget Level</span>
+                        </div>
+                        <span class="text-2xl font-bold text-gradient" id="previewPrice">₹0</span>
+                    </div>
+                    <p class="text-slate-500 text-sm mt-2" id="previewDesc">Description will appear here...</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:opacity-90 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add Service Pricing
+                    </button>
+                    <a href="{% url 'professionals:dashboard' %}" class="px-6 py-3 rounded-xl border border-slate-600 text-slate-400 hover:text-white hover:border-slate-500 transition-all duration-300 font-medium flex items-center">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Live preview
+    const nameInput = document.getElementById('id_service_name');
+    const budgetSelect = document.getElementById('id_budget_level');
+    const priceInput = document.getElementById('id_price');
+    const descInput = document.getElementById('id_description');
+
+    const previewName = document.getElementById('previewName');
+    const previewBadge = document.getElementById('previewBadge');
+    const previewPrice = document.getElementById('previewPrice');
+    const previewDesc = document.getElementById('previewDesc');
+
+    const budgetColors = {
+        'low': { bg: 'bg-green-500/20', text: 'text-green-400', label: 'Low' },
+        'medium': { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'Medium' },
+        'high': { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'High' },
+    };
+
+    function updatePreview() {
+        previewName.textContent = nameInput.value || 'Service Name';
+        previewPrice.textContent = '₹' + (priceInput.value || '0');
+        previewDesc.textContent = descInput.value || 'Description will appear here...';
+        
+        const level = budgetSelect.value;
+        if (level && budgetColors[level]) {
+            previewBadge.className = `text-sm px-3 py-1 rounded-full inline-block mt-1 ${budgetColors[level].bg} ${budgetColors[level].text}`;
+            previewBadge.textContent = budgetColors[level].label;
+        } else {
+            previewBadge.className = 'text-sm px-3 py-1 rounded-full bg-slate-700 text-slate-400 inline-block mt-1';
+            previewBadge.textContent = 'Budget Level';
+        }
+    }
+
+    nameInput.addEventListener('input', updatePreview);
+    budgetSelect.addEventListener('change', updatePreview);
+    priceInput.addEventListener('input', updatePreview);
+    descInput.addEventListener('input', updatePreview);
+
+    // Initialize preview with existing values
+    updatePreview();
+
+    // Entrance animation
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(150),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}

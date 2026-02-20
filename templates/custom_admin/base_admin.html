@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GCIAP Admin Panel — Manage users, professionals, products, orders and bookings.">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block title %}Admin — GCIAP{% endblock %}</title>
+    {% load static %}
+    <link rel="icon" type="image/jpeg" href="{% static 'images/icons/GCIAP_LOGO.jpg' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body class="min-h-screen bg-[#020617]" {% block body_data %}{% endblock %}>
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 min-h-screen glass-panel border-r border-slate-800/50 fixed left-0 top-0 overflow-y-auto z-50">
+            <div class="p-8">
+                <a href="{% url 'custom_admin:dashboard' %}" class="flex items-center gap-3 group">
+                    <img src="{% static 'images/icons/GCIAP_LOGO.jpg' %}" alt="GCIAP Logo"
+                         class="h-10 w-10 rounded-xl object-cover ring-2 ring-purple-500/40 group-hover:ring-purple-400 transition-all duration-300 shrink-0">
+                    <div>
+                        <h2 class="font-boa text-2xl gradient-text tracking-wider leading-none">GCIAP</h2>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">Admin Dashboard</p>
+                    </div>
+                </a>
+            </div>
+            
+            <nav class="px-4 space-y-1">
+                <a href="{% url 'custom_admin:dashboard' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 admin-nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">Management</div>
+                
+                <a href="{% url 'custom_admin:user_list' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 admin-nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span>Users</span>
+                </a>
+                <a href="{% url 'custom_admin:professional_list' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 admin-nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span>Professionals</span>
+                </a>
+                <a href="{% url 'custom_admin:product_list' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 admin-nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                    <span>Products</span>
+                </a>
+                <a href="{% url 'custom_admin:order_list' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 admin-nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <span>Orders</span>
+                </a>
+                <a href="{% url 'custom_admin:booking_list' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 admin-nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span>Bookings</span>
+                </a>
+                <a href="{% url 'custom_admin:upgrade_request_list' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 admin-nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z"/></svg>
+                    <span>Upgrade Requests</span>
+                </a>
+                
+                <div class="pt-8 pb-4">
+                    <div class="h-[1px] bg-slate-800/50 mx-4"></div>
+                </div>
+                
+                <!-- <a href="{% url 'home' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 admin-nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    <span>View Site</span>
+                </a> -->
+                <a href="/django-admin/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 admin-nav-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.544.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span>Django Admin</span>
+                </a>
+                <a href="{% url 'users:logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-400/70 hover:text-red-400 hover:bg-red-400/10 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4-4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 min-h-screen" id="admin-main">
+            <header class="h-20 glass-panel border-b border-slate-800/50 flex items-center justify-between px-8 sticky top-0 z-40">
+                <h1 class="text-xl font-semibold text-slate-200">{% block page_title %}Admin Panel{% endblock %}</h1>
+                <div class="flex items-center gap-4">
+                    <div class="flex flex-col items-end">
+                        <span class="text-sm font-medium text-slate-200">{{ user.username }}</span>
+                        {% if user_role %}
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded
+                                {% if user_role == 'admin' %}bg-red-500/20 text-red-400
+                                {% elif user_role == 'professional' %}bg-amber-500/20 text-amber-400
+                                {% else %}bg-blue-500/20 text-blue-400{% endif %}">
+                                {{ user_role }}
+                            </span>
+                        {% else %}
+                            <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">User</span>
+                        {% endif %}
+                    </div>
+                    <div class="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-slate-100 font-bold">
+                        {{ user.username|first|upper }}
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8">
+                {% if messages %}
+                <div class="space-y-4 mb-8">
+                    {% for message in messages %}
+                    <div class="p-4 rounded-xl glass-panel border-l-4 
+                        {% if message.tags == 'success' %}border-emerald-500 bg-emerald-500/10 text-emerald-400
+                        {% elif message.tags == 'error' %}border-rose-500 bg-rose-500/10 text-rose-400
+                        {% else %}border-blue-500 bg-blue-500/10 text-blue-400{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="animate-content">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         GLOBAL MODAL SHELL
+         Child templates fill these blocks:
+           modal_title      — header text
+           modal_content    — body (form / confirm)
+           modal_cancel_url — where X / Cancel navigates
+         Set data-use-modal="true" via the body_data block to auto-open.
+    ══════════════════════════════════════════════════════════════ -->
+    <div id="admin-modal-overlay"
+         class="fixed inset-0 z-[200] hidden items-center justify-center p-4"
+         style="backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(2,6,23,0.72);">
+
+        <div id="admin-modal-box"
+             class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto
+                    glass-panel rounded-3xl border border-slate-700/60 shadow-2xl flex flex-col"
+             style="opacity:0;transform:scale(0.92) translateY(24px);">
+
+            <!-- Modal header -->
+            <div class="flex items-center justify-between px-8 py-6 border-b border-slate-800/50 shrink-0">
+                <h2 class="text-xl font-bold text-white">{% block modal_title %}Action{% endblock %}</h2>
+                <a id="admin-modal-close"
+                   href="{% block modal_cancel_url %}javascript:history.back(){% endblock %}"
+                   class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center
+                          text-slate-400 hover:text-white transition-all group" aria-label="Close">
+                    <svg class="w-4 h-4 group-hover:rotate-90 transition-transform duration-200"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Modal body -->
+            <div class="px-8 py-6 flex-1">
+                {% block modal_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* ── Django form field styling inside modal ── */
+        #admin-modal-box input:not([type=checkbox]):not([type=radio]):not([type=file]),
+        #admin-modal-box select,
+        #admin-modal-box textarea {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 0.75rem;
+            background: rgba(15,23,42,0.6);
+            border: 1px solid rgba(100,116,139,0.3);
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-top: 0.25rem;
+        }
+        #admin-modal-box input[type=file] {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        #admin-modal-box input:focus,
+        #admin-modal-box select:focus,
+        #admin-modal-box textarea:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 2px rgba(168,85,247,0.2);
+        }
+        #admin-modal-box label {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #64748b;
+            margin-bottom: 0.2rem;
+        }
+        #admin-modal-box p { margin-bottom: 1rem; }
+        #admin-modal-box .helptext,
+        #admin-modal-box .help-block { font-size: 0.72rem; color: #475569; margin-top: 0.2rem; }
+        #admin-modal-box ul.errorlist { list-style: none; padding: 0; margin-top: 0.25rem; }
+        #admin-modal-box ul.errorlist li { color: #f87171; font-size: 0.75rem; }
+
+        /* ── Blur background when modal open ── */
+        body.modal-open #admin-main,
+        body.modal-open aside {
+            filter: blur(3px) brightness(0.7);
+            pointer-events: none;
+            transition: filter 0.25s ease;
+        }
+    </style>
+
+    <script>
+        // ── Page entrance animation ──────────────────────────────
+        anime({
+            targets: '.animate-content',
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 800,
+            easing: 'easeOutExpo'
+        });
+
+        // ── Global modal engine ──────────────────────────────────
+        (function () {
+            const overlay  = document.getElementById('admin-modal-overlay');
+            const box      = document.getElementById('admin-modal-box');
+            const closeBtn = document.getElementById('admin-modal-close');
+            if (!overlay) return;
+
+            const USE_MODAL = document.body.dataset.useModal === 'true';
+
+            function openModal() {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                document.body.classList.add('modal-open');
+                anime({ targets: box, opacity: [0,1], scale: [0.92,1], translateY: [24,0], duration: 350, easing: 'easeOutCubic' });
+            }
+
+            function animateClose(callback) {
+                anime({
+                    targets: box, opacity: [1,0], scale: [1,0.92], translateY: [0,24],
+                    duration: 230, easing: 'easeInCubic',
+                    complete: function () {
+                        overlay.classList.add('hidden');
+                        overlay.classList.remove('flex');
+                        document.body.classList.remove('modal-open');
+                        if (callback) callback();
+                    }
+                });
+            }
+
+            if (USE_MODAL) openModal();
+
+            // Click outside to close
+            overlay.addEventListener('click', function (e) {
+                if (e.target !== overlay) return;
+                const href = closeBtn && closeBtn.getAttribute('href');
+                if (href && href !== '#' && href !== '' && !href.startsWith('javascript')) {
+                    animateClose(function () { window.location.href = href; });
+                } else {
+                    animateClose();
+                }
+            });
+
+            // X button — intercept to animate before navigating
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function (e) {
+                    const href = closeBtn.getAttribute('href');
+                    if (href && !href.startsWith('javascript')) {
+                        e.preventDefault();
+                        animateClose(function () { window.location.href = href; });
+                    } else {
+                        animateClose();
+                    }
+                });
+            }
+
+            // Escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !overlay.classList.contains('hidden')) closeBtn && closeBtn.click();
+            });
+
+            window.adminModal = { open: openModal, close: animateClose };
+        })();
+    </script>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- ═══ SKELETON ENGINE (admin) ═══ -->
+    <script>
+    /* Hide sk-content AND sk-empty BEFORE Tailwind CDN fires */
+    (function(){
+        var els = document.querySelectorAll('.sk-content, .sk-empty');
+        for(var i=0;i<els.length;i++) els[i].style.display='none';
+    })();
+    </script>
+    <script>
+    (function(){
+        'use strict';
+        /* Page bar */
+        var bar = document.createElement('div');
+        bar.id = 'sk-page-bar';
+        document.body.appendChild(bar);
+        bar.style.opacity='1'; bar.style.width='0%';
+        setTimeout(function(){ bar.style.width='75%'; },30);
+        function finishBar(){
+            bar.style.width='100%';
+            setTimeout(function(){ bar.style.opacity='0'; setTimeout(function(){ bar.style.width='0%'; },420); },300);
+        }
+
+        /* Offline banner */
+        var banner = document.createElement('div');
+        banner.className='sk-offline-banner';
+        banner.innerHTML='<span class="sk-offline-dot"></span><span id="sk-banner-msg">No internet connection</span><button class="sk-retry-btn" onclick="window.GCIAPSkeleton&&window.GCIAPSkeleton.retry()">&#x21BA; Retry</button>';
+        document.body.appendChild(banner);
+        function showBanner(msg){ document.getElementById('sk-banner-msg').textContent=msg||'No internet connection'; banner.classList.add('sk-offline-visible'); }
+        function hideBanner(){ banner.classList.remove('sk-offline-visible'); }
+        window.addEventListener('offline',function(){ showBanner('No internet connection'); });
+        window.addEventListener('online', function(){ hideBanner(); });
+
+        /* Resolve */
+        function resolveSection(id){
+            var sec=(typeof id==='string')?document.getElementById(id):id;
+            if(!sec||sec.classList.contains('sk-section-done')) return;
+            sec.classList.add('sk-section-done');
+            var ph=sec.querySelector('.sk-placeholder');
+            var ct=sec.querySelector('.sk-content');
+            var em=sec.querySelector('.sk-empty');
+            /* Immediately collapse placeholder — no height gap */
+            if(ph){ ph.style.display='none'; }
+            if(ct){
+                var itemCount=ct.querySelectorAll('[data-sk-item]').length;
+                var hasDataItems=ct.querySelector('[data-sk-item]')!==null;
+                if(!hasDataItems||itemCount>0){
+                    var disp=ct.classList.contains('grid')?'grid':'block';
+                    ct.style.display=disp;
+                    requestAnimationFrame(function(){ requestAnimationFrame(function(){ ct.classList.add('sk-visible'); }); });
+                } else {
+                    ct.style.display='none';
+                    if(em){ em.style.display='flex'; requestAnimationFrame(function(){ requestAnimationFrame(function(){ em.style.opacity='1'; }); }); }
+                }
+            }
+        }
+        function autoResolve(delay){
+            var d=(typeof delay==='number')?delay:550;
+            document.querySelectorAll('.sk-section').forEach(function(s){ setTimeout(function(){ resolveSection(s); },d); });
+        }
+        function retry(){
+            hideBanner();
+            if(!navigator.onLine){ showBanner('Still offline…'); return; }
+            document.querySelectorAll('.sk-section:not(.sk-section-done)').forEach(function(s){ resolveSection(s); });
+        }
+        window.GCIAPSkeleton={ resolve:resolveSection, error:function(){}, showBanner:showBanner, hideBanner:hideBanner, retry:retry, autoResolve:autoResolve, finishBar:finishBar };
+        function boot(){ autoResolve(550); finishBar(); }
+        if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',boot); } else { boot(); }
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,630 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}GCIAP - Global Construction and Interior Assistance Platform. Connect with professionals, browse products, and build your dream spaces.{% endblock %}">
+    <meta name="keywords" content="interior design, construction, architects, professionals, furniture, GCIAP">
+    <meta name="author" content="GCIAP">
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% block og_title %}GCIAP{% endblock %}">
+    <meta property="og:description" content="Connect with world-class construction and interior professionals.">
+    <meta property="og:image" content="{% static 'images/icons/GCIAP_LOGO.jpg' %}">
+    <meta property="og:type" content="website">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="GCIAP">
+    <meta name="twitter:image" content="{% static 'images/icons/GCIAP_LOGO.jpg' %}">
+    <title>{% block title %}GCIAP{% endblock %}</title>
+    <link rel="icon" type="image/jpeg" href="{% static 'images/icons/GCIAP_LOGO.jpg' %}">
+    <!-- Apple touch icon -->
+    <link rel="apple-touch-icon" href="{% static 'images/icons/GCIAP_LOGO.jpg' %}">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'boa': ['Boa Construktor', 'sans-serif'],
+                        'primary': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        accent: {
+                            DEFAULT: '#8b5cf6',
+                            light: '#a78bfa',
+                            dark: '#7c3aed',
+                        },
+                        dark: {
+                            100: '#1e293b',
+                            200: '#0f172a',
+                            300: '#020617',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        @font-face {
+            font-family: 'Boa Construktor';
+            src: url('{% static "fonts/boa-construktor-font/BoaConstruktorBold-zrjL4.ttf" %}') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        /* Glassmorphism - .glass is in base.css */
+
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Gradient backgrounds */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-dark {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Animation classes */
+        .animate-item {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        /* Navbar blur effect */
+        .navbar-blur {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Button glow */
+        .btn-glow {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Card shine effect */
+        .card-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-shine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .card-shine:hover::before {
+            left: 100%;
+        }
+
+        /* Text gradient - in base.css */
+    </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+    <!-- Navbar -->
+    <nav class="navbar-blur fixed top-0 left-0 right-0 z-50 border-b border-slate-700/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="{% url 'home' %}" class="flex items-center gap-2.5 group">
+                    <img src="{% static 'images/icons/GCIAP_LOGO.jpg' %}" alt="GCIAP Logo"
+                         class="h-9 w-9 rounded-lg object-cover ring-1 ring-purple-500/40 group-hover:ring-purple-400 transition-all duration-300">
+                    <span class="font-boa text-2xl text-gradient">GCIAP</span>
+                </a>
+
+                <!-- Navigation -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="{% url 'professionals:professional_list' %}" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-300">
+                        Professionals
+                    </a>
+                    <a href="{% url 'products:product_list' %}" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-300">
+                        Products
+                    </a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'quotations:quotation_list' %}" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-300">
+                            Quotations
+                        </a>
+                        <a href="{% url 'products:cart_view' %}" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-300 relative">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </a>
+                        <a href="{% url 'bookings:notifications' %}" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                        </a>
+                        <div class="w-px h-6 bg-slate-700 mx-2"></div>
+
+                        {% if is_admin %}
+                            <a href="{% url 'custom_admin:dashboard' %}" class="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all duration-300 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.544.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                Admin
+                            </a>
+                        {% elif is_professional %}
+                            <a href="{% url 'professionals:dashboard' %}" class="px-4 py-2 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 transition-all duration-300 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                Dashboard
+                            </a>
+                        {% endif %}
+
+                        <a href="{% url 'users:profile' %}" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-300">
+                            Profile
+                        </a>
+                        <a href="{% url 'users:booking_history' %}" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-300">
+                            History
+                        </a>
+                        <a href="{% url 'users:role_status' %}" class="px-2 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-300" title="View Role & Permissions">
+                            <span class="sr-only">Role Status</span>
+                            {% if user_role %}
+                                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded
+                                    {% if user_role == 'admin' %}bg-red-500/20 text-red-400
+                                    {% elif user_role == 'professional' %}bg-amber-500/20 text-amber-400
+                                    {% else %}bg-blue-500/20 text-blue-400{% endif %}">
+                                    {{ user_role }}
+                                </span>
+                            {% endif %}
+                        </a>
+                        <a href="{% url 'users:logout' %}" class="ml-2 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all duration-300">
+                            Logout
+                        </a>
+                    {% else %}
+                        <div class="w-px h-6 bg-slate-700 mx-2"></div>
+                        <a href="{% url 'users:login' %}" class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-300">
+                            Login
+                        </a>
+                        <a href="{% url 'users:register' %}" class="ml-2 px-5 py-2 rounded-lg gradient-primary text-white hover:opacity-90 transition-all duration-300 btn-glow">
+                            Register
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-700/50">
+            <div class="px-4 py-4 space-y-2">
+                <a href="{% url 'professionals:professional_list' %}" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50">Professionals</a>
+                <a href="{% url 'products:product_list' %}" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50">Products</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'quotations:quotation_list' %}" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50">Quotations</a>
+                    <a href="{% url 'products:cart_view' %}" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50">Cart</a>
+
+                    {% if is_admin %}
+                        <a href="{% url 'custom_admin:dashboard' %}" class="block px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.544.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            Admin Panel
+                        </a>
+                    {% elif is_professional %}
+                        <a href="{% url 'professionals:dashboard' %}" class="block px-4 py-2 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            Professional Dashboard
+                        </a>
+                    {% endif %}
+
+                    <div class="border-t border-slate-700/50 my-2"></div>
+                    <a href="{% url 'users:profile' %}" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50">Profile</a>
+                    <a href="{% url 'users:role_status' %}" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50">
+                        Role: <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded
+                            {% if user_role == 'admin' %}bg-red-500/20 text-red-400
+                            {% elif user_role == 'professional' %}bg-amber-500/20 text-amber-400
+                            {% else %}bg-blue-500/20 text-blue-400{% endif %}">{{ user_role }}</span>
+                    </a>
+                    <a href="{% url 'users:logout' %}" class="block px-4 py-2 rounded-lg text-red-400 hover:bg-red-500/20">Logout</a>
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="block px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50">Login</a>
+                    <a href="{% url 'users:register' %}" class="block px-4 py-2 rounded-lg gradient-primary text-white text-center">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    <div id="messages" class="fixed top-20 right-4 z-50 space-y-2">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message-alert px-6 py-3 rounded-lg shadow-lg transform translate-x-full {% if message.tags == 'success' %}bg-green-500/90{% elif message.tags == 'error' %}bg-red-500/90{% else %}bg-blue-500/90{% endif %} text-white backdrop-blur-sm">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-16 min-h-screen">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="font-boa text-2xl text-gradient mb-4">GCIAP</h3>
+                    <p class="text-slate-400 max-w-md">
+                        Global Construction and Interior Assistance Platform - Your one-stop solution for all construction and interior design needs.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'professionals:professional_list' %}" class="text-slate-400 hover:text-white transition-colors">Professionals</a></li>
+                        <li><a href="{% url 'products:product_list' %}" class="text-slate-400 hover:text-white transition-colors">Products</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Account</h4>
+                    <ul class="space-y-2">
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'users:profile' %}" class="text-slate-400 hover:text-white transition-colors">Profile</a></li>
+                            <li><a href="{% url 'users:booking_history' %}" class="text-slate-400 hover:text-white transition-colors">History</a></li>
+                        {% else %}
+                            <li><a href="{% url 'users:login' %}" class="text-slate-400 hover:text-white transition-colors">Login</a></li>
+                            <li><a href="{% url 'users:register' %}" class="text-slate-400 hover:text-white transition-colors">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-8 pt-8 text-center">
+                <p class="text-slate-500">&copy; 2026 Global Construction and Interior Assistance Platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Animate messages
+        document.querySelectorAll('.message-alert').forEach((msg, index) => {
+            anime({
+                targets: msg,
+                translateX: [100, 0],
+                opacity: [0, 1],
+                duration: 500,
+                delay: index * 100,
+                easing: 'easeOutExpo'
+            });
+
+            // Auto dismiss
+            setTimeout(() => {
+                anime({
+                    targets: msg,
+                    translateX: [0, 100],
+                    opacity: [1, 0],
+                    duration: 500,
+                    easing: 'easeInExpo',
+                    complete: () => msg.remove()
+                });
+            }, 5000);
+        });
+
+        // Advanced Scroll Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const animatedClasses = '.animate-item, section, .glass-panel, .card-shine';
+
+        // Initial setup for elements to fade in
+        document.querySelectorAll(animatedClasses).forEach(el => {
+            if (!el.classList.contains('no-animate')) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+            }
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+
+                    // If target is a container with children to stagger
+                    if (target.classList.contains('grid') || target.querySelector('.stagger-item')) {
+                        const children = target.querySelectorAll('.stagger-item, .card-shine, .group');
+                        if (children.length > 0) {
+                            anime({
+                                targets: children,
+                                opacity: [0, 1],
+                                translateY: [30, 0],
+                                duration: 800,
+                                delay: anime.stagger(100),
+                                easing: 'easeOutExpo'
+                            });
+                        }
+                    }
+
+                    // Animate the element itself
+                    anime({
+                        targets: target,
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        duration: 800,
+                        easing: 'easeOutExpo'
+                    });
+
+                    observer.unobserve(target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll(animatedClasses).forEach(item => {
+            observer.observe(item);
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-lg', 'bg-slate-900/95');
+                navbar.classList.remove('navbar-blur');
+            } else {
+                navbar.classList.remove('shadow-lg', 'bg-slate-900/95');
+                navbar.classList.add('navbar-blur');
+            }
+        });
+
+        // Add subtle parallax to background blobs
+        window.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+
+            document.querySelectorAll('.blur-3xl').forEach(blob => {
+                blob.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- Global Skeleton Engine - window.GCIAPSkeleton -->
+    <script>
+    /* Run immediately (before Tailwind CDN fires) - hide sk-content AND sk-empty */
+    (function hideSKEarly() {
+        var hide = document.querySelectorAll('.sk-content, .sk-empty');
+        for (var i = 0; i < hide.length; i++) {
+            hide[i].style.display = 'none';
+        }
+    })();
+    </script>
+
+    <script>
+    (function () {
+        'use strict';
+
+        /* -- Purple page-bar ------------------------------------ */
+        var bar = document.createElement('div');
+        bar.id  = 'sk-page-bar';
+        document.body.appendChild(bar);
+
+        function startBar() {
+            bar.style.opacity = '1';
+            bar.style.width   = '0%';
+            /* animate to 75% quickly - hold there until done */
+            setTimeout(function(){ bar.style.width = '75%'; }, 30);
+        }
+        function finishBar() {
+            bar.style.width = '100%';
+            setTimeout(function(){
+                bar.style.opacity = '0';
+                setTimeout(function(){ bar.style.width = '0%'; }, 420);
+            }, 300);
+        }
+        startBar(); /* kick off on every page load */
+
+        /* -- Offline banner ------------------------------------- */
+        var banner = document.createElement('div');
+        banner.className = 'sk-offline-banner';
+        banner.innerHTML =
+            '<span class="sk-offline-dot"></span>' +
+            '<span id="sk-banner-msg">No internet connection</span>' +
+            '<button class="sk-retry-btn" onclick="window.GCIAPSkeleton.retry()">&#x21BA; Retry</button>';
+        document.body.appendChild(banner);
+
+        function showBanner(msg) {
+            document.getElementById('sk-banner-msg').textContent = msg || 'No internet connection';
+            banner.classList.add('sk-offline-visible');
+        }
+        function hideBanner() { banner.classList.remove('sk-offline-visible'); }
+
+        /* -- Network monitor ------------------------------------ */
+        window.addEventListener('offline', function() { showBanner('No internet connection'); });
+        window.addEventListener('online',  function() {
+            hideBanner();
+            document.querySelectorAll('.sk-section:not(.sk-section-done)').forEach(function(s) {
+                resolveSection(s);
+            });
+        });
+
+        /* -- Core: resolve one sk-section ----------------------- */
+        function resolveSection(id) {
+            var section = (typeof id === 'string') ? document.getElementById(id) : id;
+            if (!section || section.classList.contains('sk-section-done')) return;
+            section.classList.add('sk-section-done');
+
+            var placeholder = section.querySelector('.sk-placeholder');
+            var content     = section.querySelector('.sk-content');
+            var emptyEl     = section.querySelector('.sk-empty');
+
+            /* 1 - immediately collapse placeholder (no lingering height gap) */
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+
+            /* 2 - decide: show content or empty state */
+            if (content) {
+                var itemCount = content.querySelectorAll('[data-sk-item]').length;
+                var hasDataItems = content.querySelector('[data-sk-item]') !== null;
+
+                if (!hasDataItems || itemCount > 0) {
+                    /* Content exists (or no data-sk-item markers used) - show content */
+                    var display = content.classList.contains('grid') ? 'grid' : 'block';
+                    content.style.display = display;
+                    requestAnimationFrame(function() {
+                        requestAnimationFrame(function() {
+                            content.classList.add('sk-visible');
+                        });
+                    });
+                } else {
+                    /* itemCount === 0 and hasDataItems marker exists - empty state */
+                    content.style.display = 'none';
+                    if (emptyEl) {
+                        emptyEl.style.display = 'flex';
+                        requestAnimationFrame(function() {
+                            requestAnimationFrame(function() {
+                                emptyEl.style.opacity = '1';
+                            });
+                        });
+                    }
+                }
+            }
+        }
+
+        /* -- Error: swap skeleton for error state --------------- */
+        function errorSection(id, msg) {
+            var section = (typeof id === 'string') ? document.getElementById(id) : id;
+            if (!section) return;
+            section.classList.add('sk-section-done');
+
+            var placeholder = section.querySelector('.sk-placeholder');
+            var emptyEl     = section.querySelector('.sk-empty');
+
+            if (placeholder) {
+                placeholder.style.opacity = '0';
+                setTimeout(function() { placeholder.classList.add('sk-hide'); }, 320);
+            }
+            if (emptyEl) {
+                var icon = emptyEl.querySelector('.sk-empty-icon');
+                var text = emptyEl.querySelector('.sk-empty-text');
+                if (icon) icon.innerHTML = '<svg style="width:3rem;height:3rem;color:#f87171" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+                if (text) text.textContent = msg || 'Something went wrong. Please try again.';
+                setTimeout(function() { emptyEl.classList.add('sk-empty-visible'); }, 340);
+            }
+            showBanner(msg || 'Failed to load content');
+        }
+
+        /* -- Auto-resolve with 550 ms delay -------------------- */
+        function autoResolveAll(delay) {
+            var d = (typeof delay === 'number') ? delay : 550;
+            document.querySelectorAll('.sk-section').forEach(function(sec) {
+                setTimeout(function() { resolveSection(sec); }, d);
+            });
+        }
+
+        function retry() {
+            hideBanner();
+            if (!navigator.onLine) { showBanner('Still offline...'); return; }
+            document.querySelectorAll('.sk-section:not(.sk-section-done)').forEach(function(s) {
+                resolveSection(s);
+            });
+        }
+
+        /* -- Public API ----------------------------------------- */
+        window.GCIAPSkeleton = {
+            resolve:     resolveSection,
+            error:       errorSection,
+            showBanner:  showBanner,
+            hideBanner:  hideBanner,
+            retry:       retry,
+            autoResolve: autoResolveAll,
+            finishBar:   finishBar,
+        };
+
+        /* -- Boot ----------------------------------------------- */
+        function boot() {
+            autoResolveAll(550);
+            finishBar();
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', boot);
+        } else {
+            boot();
+        }
+    })();
+    </script>
+
+</body>
+</html>

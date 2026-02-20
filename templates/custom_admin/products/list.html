@@ -1,0 +1,119 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block page_title %}Product Catalog{% endblock %}
+
+{% block content %}
+<div class="glass-panel rounded-3xl overflow-hidden border border-slate-800/50">
+    <div class="px-8 py-6 border-b border-slate-800/50 flex items-center justify-between bg-slate-800/10">
+        <div>
+            <h3 class="text-xl font-bold text-white">All Products</h3>
+            <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">Global inventory: {{ products.count }} items</p>
+        </div>
+        <a href="{% url 'custom_admin:product_create' %}" class="px-5 py-2.5 rounded-xl gradient-primary text-white text-xs font-bold hover:opacity-90 transition-all shadow-lg shadow-purple-500/20">
+            ADD NEW PRODUCT
+        </a>
+    </div>
+    
+    <!-- Filters & Search -->
+    <div class="px-8 py-4 border-b border-slate-800/50 bg-slate-800/5">
+        <form method="get" class="flex flex-wrap gap-4 items-center">
+            <div class="flex-1 min-w-[250px]">
+                <div class="relative">
+                    <input type="text" name="q" placeholder="Search products (name, source, desc)..." value="{{ request.GET.q|default:'' }}"
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-sm">
+                    <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+            </div>
+            
+            <div class="w-40">
+                <select name="category" onchange="this.form.submit()" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white focus:outline-none focus:border-purple-500 text-sm appearance-none cursor-pointer">
+                    <option value="">All Categories</option>
+                    <option value="furniture" {% if request.GET.category == 'furniture' %}selected{% endif %}>Furniture</option>
+                    <option value="decor" {% if request.GET.category == 'decor' %}selected{% endif %}>Decor</option>
+                    <option value="construction_material" {% if request.GET.category == 'construction_material' %}selected{% endif %}>Construction</option>
+                </select>
+            </div>
+            
+            <div class="w-36">
+                <select name="budget" onchange="this.form.submit()" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white focus:outline-none focus:border-purple-500 text-sm appearance-none cursor-pointer">
+                    <option value="">All Budgets</option>
+                    <option value="low" {% if request.GET.budget == 'low' %}selected{% endif %}>Low</option>
+                    <option value="medium" {% if request.GET.budget == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="high" {% if request.GET.budget == 'high' %}selected{% endif %}>High</option>
+                </select>
+            </div>
+            
+            {% if request.GET.q or request.GET.category or request.GET.budget %}
+            <a href="{% url 'custom_admin:product_list' %}" class="px-4 py-2.5 rounded-xl bg-slate-700 text-white text-xs font-bold hover:bg-slate-600 transition-colors flex items-center">
+                CLEAR
+            </a>
+            {% endif %}
+        </form>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-800/20">
+                <tr>
+                    <th class="px-8 py-4">Product</th>
+                    <th class="px-8 py-4">Category</th>
+                    <th class="px-8 py-4">Price</th>
+                    <th class="px-8 py-4">Stock</th>
+                    <th class="px-8 py-4">Source</th>
+                    <th class="px-8 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-slate-300 divide-y divide-slate-800/50">
+                {% for product in products %}
+                <tr class="table-row-hover transition-colors">
+                    <td class="px-8 py-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl border border-slate-700/50 overflow-hidden bg-slate-900 flex-shrink-0">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                                {% else %}
+                                <div class="w-full h-full flex items-center justify-center text-slate-700">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-white truncate max-w-[200px]">{{ product.name }}</h4>
+                                <p class="text-[10px] text-slate-500 uppercase tracking-wider">{{ product.get_budget_level_display }} PRICE</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-4">
+                        <span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-bold uppercase tracking-wider border border-blue-500/20">
+                            {{ product.get_category_display }}
+                        </span>
+                    </td>
+                    <td class="px-8 py-4 font-bold text-emerald-400">₹{{ product.price }}</td>
+                    <td class="px-8 py-4">
+                        {% if product.stock_quantity < 10 %}
+                        <span class="text-rose-400 font-bold text-sm">{{ product.stock_quantity }}</span>
+                        <span class="text-[9px] text-rose-500/50 uppercase ml-1">Low Stock</span>
+                        {% else %}
+                        <span class="text-slate-300">{{ product.stock_quantity }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-8 py-4 text-xs font-medium text-slate-500">{{ product.supplier_country }}</td>
+                    <td class="px-8 py-4 text-right space-x-2">
+                        <a href="{% url 'custom_admin:product_edit' product.id %}" class="inline-flex items-center px-4 py-2 rounded-lg bg-slate-800 text-[10px] font-bold text-white hover:bg-slate-700 transition-colors">
+                            EDIT
+                        </a>
+                        <a href="{% url 'custom_admin:product_delete' product.id %}" class="inline-flex items-center px-4 py-2 rounded-lg bg-rose-500/10 text-[10px] font-bold text-rose-400 hover:bg-rose-500/20 transition-colors">
+                            DELETE
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-8 py-12 text-center text-slate-500 italic">No products found in the catalog</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

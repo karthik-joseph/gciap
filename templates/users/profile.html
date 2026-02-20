@@ -1,0 +1,122 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="animate-item text-center mb-8">
+            <h2 class="font-boa text-4xl text-gradient">My Profile</h2>
+            <p class="mt-2 text-slate-400">Manage your account settings</p>
+        </div>
+        
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8 shadow-2xl">
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">{{ field.label }}</label>
+                    {% if field.field.widget.input_type == 'select' %}
+                        <select name="{{ field.name }}" id="{{ field.id_for_label }}"
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300">
+                            {% for choice in field.field.choices %}
+                                <option value="{{ choice.0 }}" {% if choice.0 == field.value %}selected{% endif %}>{{ choice.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    {% elif field.field.widget.input_type == 'textarea' or field.name == 'address' %}
+                        <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" rows="3"
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300">{{ field.value|default:'' }}</textarea>
+                    {% else %}
+                        <input type="{{ field.field.widget.input_type|default:'text' }}" 
+                            name="{{ field.name }}" 
+                            id="{{ field.id_for_label }}"
+                            value="{{ field.value|default:'' }}"
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300">
+                    {% endif %}
+                    {% if field.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                <button type="submit" class="w-full py-3 px-4 rounded-xl gradient-primary text-white font-semibold hover:opacity-90 transition-all duration-300 btn-glow">
+                    Update Profile
+                </button>
+            </form>
+        </div>
+        
+        <!-- Professional Upgrade Section -->
+        {% if not user.is_staff and not user.is_superuser %}
+        <div class="animate-item mt-8">
+            {% if upgrade_request and upgrade_request.status == 'pending' %}
+                <!-- Pending Request Banner -->
+                <div class="bg-amber-500/10 backdrop-blur-xl rounded-2xl border border-amber-500/20 p-6 shadow-2xl">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-amber-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-white font-bold">Upgrade Request Pending</h3>
+                            <p class="text-amber-400/70 text-sm mt-1">Your request to become a {{ upgrade_request.get_professional_type_display }} is under review.</p>
+                        </div>
+                        <a href="{% url 'users:upgrade_status' %}" class="px-4 py-2 rounded-xl bg-amber-500/20 text-amber-400 font-bold text-sm hover:bg-amber-500/30 transition-all">
+                            View Status
+                        </a>
+                    </div>
+                </div>
+            {% elif upgrade_request and upgrade_request.status == 'approved' %}
+                <!-- Approved Banner -->
+                <div class="bg-emerald-500/10 backdrop-blur-xl rounded-2xl border border-emerald-500/20 p-6 shadow-2xl">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-white font-bold flex items-center">You're a Professional! <svg class="w-5 h-5 ml-2 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg></h3>
+                            <p class="text-emerald-400/70 text-sm mt-1">Your upgrade to {{ upgrade_request.get_professional_type_display }} has been approved.</p>
+                        </div>
+                        <a href="{% url 'professionals:dashboard' %}" class="px-4 py-2 rounded-xl gradient-primary text-white font-bold text-sm hover:opacity-90 transition-all">
+                            Go to Dashboard
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- CTA to Request Upgrade -->
+                <div class="bg-gradient-to-r from-purple-500/10 to-blue-500/10 backdrop-blur-xl rounded-2xl border border-purple-500/20 p-6 shadow-2xl">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-white font-bold">Become a Professional</h3>
+                            <p class="text-slate-400 text-sm mt-1">Upgrade your account to offer services, manage bookings, and grow your business.</p>
+                        </div>
+                        <a href="{% url 'users:request_upgrade' %}" class="px-4 py-2 rounded-xl gradient-primary text-white font-bold text-sm hover:opacity-90 transition-all btn-glow">
+                            Request Upgrade
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(100),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}

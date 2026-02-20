@@ -1,0 +1,179 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Upgrade Status - GCIAP{% endblock %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <div class="animate-item text-center mb-10">
+            <h2 class="font-boa text-4xl text-gradient">Upgrade Status</h2>
+            <p class="mt-3 text-slate-400">Track the status of your professional upgrade requests</p>
+        </div>
+        
+        {% if upgrade_requests %}
+        <div class="space-y-6">
+            {% for req in upgrade_requests %}
+            <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6 shadow-2xl">
+                <!-- Status Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center
+                            {% if req.status == 'pending' %}bg-amber-500/20 border border-amber-500/30
+                            {% elif req.status == 'approved' %}bg-emerald-500/20 border border-emerald-500/30
+                            {% else %}bg-rose-500/20 border border-rose-500/30{% endif %}">
+                            {% if req.status == 'pending' %}
+                                <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            {% elif req.status == 'approved' %}
+                                <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            {% else %}
+                                <svg class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">{{ req.get_professional_type_display }}</h3>
+                            <p class="text-slate-400 text-xs">Submitted on {{ req.created_at|date:"M d, Y H:i" }}</p>
+                        </div>
+                    </div>
+                    <span class="px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider
+                        {% if req.status == 'pending' %}bg-amber-500/20 text-amber-400 border border-amber-500/20
+                        {% elif req.status == 'approved' %}bg-emerald-500/20 text-emerald-400 border border-emerald-500/20
+                        {% else %}bg-rose-500/20 text-rose-400 border border-rose-500/20{% endif %}">
+                        {{ req.status }}
+                    </span>
+                </div>
+                
+                <!-- Progress Steps -->
+                <div class="flex items-center gap-2 mb-6 px-2">
+                    <!-- Step 1: Submitted -->
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold border border-emerald-500/30">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <span class="text-xs text-emerald-400 font-medium">Submitted</span>
+                    </div>
+                    <div class="flex-1 h-0.5 {% if req.status != 'pending' %}bg-emerald-500/30{% else %}bg-slate-700{% endif %}"></div>
+                    
+                    <!-- Step 2: Under Review -->
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border
+                            {% if req.status == 'pending' %}bg-amber-500/20 text-amber-400 border-amber-500/30 animate-pulse
+                            {% elif req.status == 'approved' or req.status == 'rejected' %}bg-emerald-500/20 text-emerald-400 border-emerald-500/30
+                            {% endif %}">
+                            {% if req.status == 'pending' %}
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            {% else %}
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs {% if req.status == 'pending' %}text-amber-400{% else %}text-emerald-400{% endif %} font-medium">Review</span>
+                    </div>
+                    <div class="flex-1 h-0.5 {% if req.status == 'approved' %}bg-emerald-500/30{% elif req.status == 'rejected' %}bg-rose-500/30{% else %}bg-slate-700{% endif %}"></div>
+                    
+                    <!-- Step 3: Decision -->
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border
+                            {% if req.status == 'approved' %}bg-emerald-500/20 text-emerald-400 border-emerald-500/30
+                            {% elif req.status == 'rejected' %}bg-rose-500/20 text-rose-400 border-rose-500/30
+                            {% else %}bg-slate-800 text-slate-500 border-slate-700{% endif %}">
+                            {% if req.status == 'approved' %}
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            {% elif req.status == 'rejected' %}
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                            {% else %}
+                                <span>3</span>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs 
+                            {% if req.status == 'approved' %}text-emerald-400
+                            {% elif req.status == 'rejected' %}text-rose-400
+                            {% else %}text-slate-500{% endif %} font-medium">
+                            {% if req.status == 'approved' %}Approved{% elif req.status == 'rejected' %}Rejected{% else %}Decision{% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="p-3 rounded-lg bg-slate-900/50">
+                        <span class="text-slate-400 text-xs uppercase tracking-wider">Experience</span>
+                        <p class="text-white font-medium mt-1">{{ req.experience_years }} years</p>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/50">
+                        <span class="text-slate-400 text-xs uppercase tracking-wider">Phone</span>
+                        <p class="text-white font-medium mt-1">{{ req.phone }}</p>
+                    </div>
+                </div>
+                
+                {% if req.admin_notes %}
+                <div class="mt-4 p-4 rounded-xl border-l-2 
+                    {% if req.status == 'approved' %}border-emerald-500/50 bg-emerald-500/5
+                    {% else %}border-rose-500/50 bg-rose-500/5{% endif %}">
+                    <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Admin Response</span>
+                    <p class="text-slate-300 mt-2 text-sm">{{ req.admin_notes }}</p>
+                </div>
+                {% endif %}
+                
+                {% if req.status == 'approved' %}
+                <div class="mt-6 pt-4 border-t border-slate-700/50">
+                    <a href="{% url 'professionals:dashboard' %}" class="inline-flex items-center px-5 py-2.5 rounded-xl gradient-primary text-white font-bold text-sm hover:opacity-90 transition-all btn-glow">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                        Go to Professional Dashboard
+                    </a>
+                </div>
+                {% endif %}
+                
+                {% if req.status == 'rejected' %}
+                <div class="mt-6 pt-4 border-t border-slate-700/50">
+                    <a href="{% url 'users:request_upgrade' %}" class="inline-flex items-center px-5 py-2.5 rounded-xl bg-slate-700 text-white font-bold text-sm hover:bg-slate-600 transition-all">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Submit New Request
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-12 shadow-2xl text-center">
+            <div class="w-20 h-20 mx-auto mb-6 rounded-3xl bg-slate-700/30 flex items-center justify-center">
+                <svg class="w-10 h-10 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">No Upgrade Requests</h3>
+            <p class="text-slate-400 mb-8">You haven't submitted any professional upgrade requests yet.</p>
+            <a href="{% url 'users:request_upgrade' %}" class="inline-flex items-center px-6 py-3 rounded-xl gradient-primary text-white font-bold hover:opacity-90 transition-all btn-glow">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z"/>
+                </svg>
+                Request Professional Upgrade
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(150),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}

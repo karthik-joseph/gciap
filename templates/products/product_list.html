@@ -1,0 +1,237 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Browse Products | GCIAP{% endblock %}
+{% block meta_description %}Explore furniture, decor and construction materials from global suppliers on GCIAP.{% endblock %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+<div class="max-w-7xl mx-auto">
+
+    <!-- ── Header ─────────────────────────────── -->
+    <div class="text-center mb-12">
+        <h1 class="animate-item font-boa text-4xl md:text-5xl text-gradient mb-4">Browse Products</h1>
+        <p class="animate-item text-slate-400 max-w-2xl mx-auto">Explore furniture, decor, and materials from global suppliers</p>
+    </div>
+
+    <!-- ── Filters ────────────────────────────── -->
+    <div class="animate-item mb-8">
+        <form method="get" class="bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6">
+            <div class="flex flex-wrap gap-4 items-end">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Category</label>
+                    <select name="category" class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300">
+                        <option value="">All Categories</option>
+                        <option value="furniture"             {% if request.GET.category == 'furniture' %}selected{% endif %}>Furniture</option>
+                        <option value="decor"                 {% if request.GET.category == 'decor' %}selected{% endif %}>Decor</option>
+                        <option value="construction_material" {% if request.GET.category == 'construction_material' %}selected{% endif %}>Construction Material</option>
+                    </select>
+                </div>
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Budget Level</label>
+                    <select name="budget" class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300">
+                        <option value="">All Budgets</option>
+                        <option value="low"    {% if request.GET.budget == 'low' %}selected{% endif %}>Low Budget</option>
+                        <option value="medium" {% if request.GET.budget == 'medium' %}selected{% endif %}>Medium Budget</option>
+                        <option value="high"   {% if request.GET.budget == 'high' %}selected{% endif %}>High Budget</option>
+                    </select>
+                </div>
+                <button type="submit" class="px-8 py-3 rounded-xl gradient-primary text-white font-semibold hover:opacity-90 transition-all duration-300">
+                    Apply Filters
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         sk-section  — the skeleton engine watches this element
+    ══════════════════════════════════════════════════════════ -->
+    <div id="product-section" class="sk-section">
+
+        <!-- ── SKELETON placeholder (8 cards) ─────────────── -->
+        <div class="sk-placeholder grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for i in "12345678" %}
+            <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                <!-- image area -->
+                <div class="sk sk-rect" style="--sk-w:100%;--sk-h:192px;--sk-r:0"></div>
+                <div class="p-5 space-y-3">
+                    <!-- title -->
+                    <div class="sk sk-text" style="--sk-w:75%;--sk-h:18px"></div>
+                    <div class="flex justify-between items-center">
+                        <!-- price -->
+                        <div class="sk sk-round" style="--sk-w:80px;--sk-h:24px"></div>
+                        <!-- country -->
+                        <div class="sk sk-text" style="--sk-w:60px;--sk-h:13px"></div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="sk sk-text" style="--sk-w:40%;--sk-h:12px"></div>
+                        <div class="sk sk-text" style="--sk-w:35%;--sk-h:12px"></div>
+                    </div>
+                    <!-- buttons -->
+                    <div class="flex gap-2 pt-1">
+                        <div class="sk sk-square flex-1" style="--sk-h:38px"></div>
+                        <div class="sk sk-square flex-1" style="--sk-h:38px"></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Real content OR inline empty state (server-side rendered) -->
+        <div class="sk-content">
+            {% if products %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {% for product in products %}
+                    <div data-sk-item
+                         class="animate-item group bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50
+                                 overflow-hidden hover:border-purple-500/50 transition-all duration-500 hover-lift card-shine">
+
+                        <!-- Image -->
+                        <div class="relative h-48 bg-slate-700 overflow-hidden">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                 loading="lazy">
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center bg-slate-800/80">
+                                <svg class="w-16 h-16 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                </svg>
+                            </div>
+                            {% endif %}
+                            <!-- Category badge -->
+                            <span class="absolute top-3 left-3 px-3 py-1 text-xs rounded-full bg-slate-900/80 text-white backdrop-blur-sm">
+                                {{ product.get_category_display }}
+                            </span>
+                            <!-- Budget badge -->
+                            <span class="absolute top-3 right-3 px-3 py-1 text-xs rounded-full backdrop-blur-sm text-white
+                                {% if product.budget_level == 'low' %}bg-emerald-500/80
+                                {% elif product.budget_level == 'medium' %}bg-blue-500/80
+                                {% else %}bg-purple-500/80{% endif %}">
+                                {{ product.get_budget_level_display }}
+                            </span>
+                        </div>
+
+                        <div class="p-5">
+                            <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-purple-400 transition-colors line-clamp-1">
+                                {{ product.name }}
+                            </h3>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-2xl font-bold text-gradient">₹{{ product.price }}</span>
+                                <span class="text-sm text-slate-400 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    {{ product.supplier_country }}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 mb-4">
+                                <span>Stock: <span class="text-slate-400">{{ product.stock_quantity }}</span></span>
+                                <span>{{ product.delivery_days }} days delivery</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="{% url 'products:product_detail' product.id %}"
+                                   class="flex-1 py-2.5 text-center rounded-xl border border-slate-600 text-white text-sm font-medium
+                                          hover:bg-slate-700/50 hover:border-slate-500 transition-all duration-300">
+                                    Details
+                                </a>
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'products:add_to_cart' product.id %}"
+                                   class="flex-1 py-2.5 text-center rounded-xl gradient-primary text-white text-sm font-medium
+                                          hover:opacity-90 transition-all duration-300">
+                                    Add to Cart
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+                <!-- Empty state — shown directly by Django when no results -->
+                <div class="flex flex-col items-center justify-center py-24 px-6 text-center">
+                    <!-- Icon with glow ring -->
+                    <div class="relative mb-6">
+                        <div class="absolute inset-0 rounded-full bg-purple-500/10 blur-2xl scale-150"></div>
+                        <div class="relative w-24 h-24 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    {% if selected_category_label and selected_budget_label %}
+                        <h3 class="text-xl font-bold text-white mb-2">
+                            No <span class="text-purple-400">{{ selected_category_label }}</span> in <span class="text-purple-400">{{ selected_budget_label }}</span> Found
+                        </h3>
+                        <p class="text-slate-400 text-sm max-w-xs mb-6">
+                            No <strong class="text-slate-300">{{ selected_category_label }}</strong> are available in the <strong class="text-slate-300">{{ selected_budget_label }}</strong> range. Try a different combination.
+                        </p>
+                    {% elif selected_category_label %}
+                        <h3 class="text-xl font-bold text-white mb-2">
+                            No <span class="text-purple-400">{{ selected_category_label }}</span> Found
+                        </h3>
+                        <p class="text-slate-400 text-sm max-w-xs mb-6">
+                            There are currently no <strong class="text-slate-300">{{ selected_category_label }}</strong> available. Try a different category or check back later.
+                        </p>
+                    {% elif selected_budget_label %}
+                        <h3 class="text-xl font-bold text-white mb-2">
+                            No <span class="text-purple-400">{{ selected_budget_label }}</span> Products Found
+                        </h3>
+                        <p class="text-slate-400 text-sm max-w-xs mb-6">
+                            No products are available in the <strong class="text-slate-300">{{ selected_budget_label }}</strong> range. Try a different budget or check back later.
+                        </p>
+                    {% else %}
+                        <h3 class="text-xl font-bold text-white mb-2">No Products Found</h3>
+                        <p class="text-slate-400 text-sm max-w-xs mb-6">
+                            No products are currently available. Check back later or adjust your filters.
+                        </p>
+                    {% endif %}
+
+                    <!-- Actions -->
+                    <div class="flex flex-wrap gap-3 justify-center">
+                        <a href="?"
+                           class="px-5 py-2.5 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30
+                                  text-sm font-medium hover:bg-purple-500/30 hover:border-purple-400 transition-all duration-300">
+                            ✕ Clear Filters
+                        </a>
+                        <a href="{% url 'products:product_list' %}"
+                           class="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-400
+                                  text-sm font-medium hover:text-white hover:border-slate-500 transition-all duration-300">
+                            View All Products
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+    </div><!-- /#product-section -->
+
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Stagger animate after skeleton resolves
+    document.addEventListener('DOMContentLoaded', function () {
+        // The skeleton engine auto-resolves on DOMContentLoaded.
+        // We hook into the transition: after 350ms content is visible, run anime.
+        setTimeout(function () {
+            anime({
+                targets: '[data-sk-item]',
+                opacity: [0, 1],
+                translateY: [24, 0],
+                duration: 700,
+                delay: anime.stagger(50),
+                easing: 'easeOutExpo'
+            });
+        }, 360);
+    });
+</script>
+{% endblock %}

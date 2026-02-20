@@ -1,0 +1,25 @@
+{% extends 'custom_admin/base_admin.html' %}
+{% block page_title %}Products{% endblock %}
+{% block body_data %}data-use-modal="true"{% endblock %}
+{% block modal_title %}Create New Product{% endblock %}
+{% block modal_cancel_url %}{% url 'custom_admin:product_list' %}{% endblock %}
+
+{% block modal_content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="flex gap-3 justify-end mt-6 pt-4 border-t border-slate-800/50">
+        <a href="{% url 'custom_admin:product_list' %}"
+           class="px-6 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-semibold text-sm hover:bg-slate-700 transition-colors">
+            Cancel
+        </a>
+        <button type="submit"
+                class="px-6 py-2.5 rounded-xl gradient-primary text-white font-semibold text-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Create Product
+        </button>
+    </div>
+</form>
+{% endblock %}

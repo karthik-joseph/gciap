@@ -1,0 +1,89 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="font-boa text-3xl text-gradient">{{ quotation.project_title }}</h1>
+                <span class="px-4 py-2 rounded-full text-sm font-medium
+                    {% if quotation.status == 'pending' %}bg-yellow-500/20 text-yellow-400
+                    {% elif quotation.status == 'accepted' %}bg-green-500/20 text-green-400
+                    {% else %}bg-red-500/20 text-red-400{% endif %}">
+                    {{ quotation.get_status_display }}
+                </span>
+            </div>
+            
+            <p class="text-slate-300 mb-6">{{ quotation.project_description }}</p>
+            
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="p-4 rounded-xl bg-slate-900/50">
+                    <p class="text-slate-500">Budget Estimate</p>
+                    <p class="text-2xl font-bold text-gradient">₹{{ quotation.budget_estimate }}</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-900/50">
+                    <p class="text-slate-500">Created</p>
+                    <p class="text-white font-semibold">{{ quotation.created_at|date:"Y-m-d" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8 mb-6">
+            <h2 class="text-xl font-semibold text-white mb-6">Quotation Items</h2>
+            
+            {% if items %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left text-slate-400 text-sm border-b border-slate-700">
+                            <th class="pb-3">Item</th>
+                            <th class="pb-3">Qty</th>
+                            <th class="pb-3">Unit Price</th>
+                            <th class="pb-3 text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-white">
+                        {% for item in items %}
+                        <tr class="border-b border-slate-700/50">
+                            <td class="py-4">{{ item.item_name }}</td>
+                            <td class="py-4">{{ item.quantity }}</td>
+                            <td class="py-4">₹{{ item.unit_price }}</td>
+                            <td class="py-4 text-right font-semibold">₹{{ item.total_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-slate-400 text-center py-4">No items added yet</p>
+            {% endif %}
+            
+            <a href="{% url 'quotations:add_quotation_item' quotation.id %}" class="mt-6 inline-block px-6 py-3 rounded-xl border border-slate-600 text-white hover:bg-slate-700/50 transition-all duration-300">
+                + Add Item
+            </a>
+        </div>
+        
+        <div class="flex gap-4">
+            <a href="{% url 'quotations:quotation_list' %}" class="px-6 py-3 rounded-xl border border-slate-600 text-white hover:bg-slate-700/50 transition-all duration-300">
+                Back to List
+            </a>
+            <a href="{% url 'quotations:delete_quotation' quotation.id %}" class="px-6 py-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all duration-300">
+                Delete Quotation
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(100),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}

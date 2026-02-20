@@ -1,0 +1,90 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="font-boa text-3xl text-gradient">Booking Details</h1>
+                <span class="px-4 py-2 rounded-full text-sm font-medium
+                    {% if booking.status == 'pending' %}bg-yellow-500/20 text-yellow-400
+                    {% elif booking.status == 'confirmed' %}bg-blue-500/20 text-blue-400
+                    {% elif booking.status == 'completed' %}bg-green-500/20 text-green-400
+                    {% else %}bg-red-500/20 text-red-400{% endif %}">
+                    {{ booking.get_status_display }}
+                </span>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-900/50 border border-slate-700/50">
+                    <div class="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center text-2xl font-bold text-white">
+                        {{ booking.professional.user.username|slice:":1"|upper }}
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white">{{ booking.professional.user.username }}</h3>
+                        <p class="text-purple-400">{{ booking.professional.get_professional_type_display }}</p>
+                    </div>
+                </div>
+                
+                <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-700/50">
+                    <p class="text-slate-500 text-sm">Service</p>
+                    <p class="text-white font-semibold">{{ booking.service.service_name }}</p>
+                    <p class="text-2xl font-bold text-gradient mt-1">₹{{ booking.service.price }}</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-700/50">
+                        <p class="text-slate-500 text-sm">Date</p>
+                        <p class="text-white font-semibold flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            {{ booking.booking_date }}
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-700/50">
+                        <p class="text-slate-500 text-sm">Time</p>
+                        <p class="text-white font-semibold flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            {{ booking.booking_time }}
+                        </p>
+                    </div>
+                </div>
+                
+                {% if booking.notes %}
+                <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-700/50">
+                    <p class="text-slate-500 text-sm">Notes</p>
+                    <p class="text-white">{{ booking.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="mt-8 flex gap-4">
+                <a href="{% url 'users:booking_history' %}" class="flex-1 py-3 text-center rounded-xl border border-slate-600 text-white hover:bg-slate-700/50 transition-all duration-300">
+                    Back to History
+                </a>
+                {% if booking.status == 'pending' %}
+                <a href="#" class="flex-1 py-3 text-center rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all duration-300">
+                    Cancel Booking
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(100),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}

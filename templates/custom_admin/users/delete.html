@@ -1,0 +1,37 @@
+{% extends 'custom_admin/base_admin.html' %}
+{% block page_title %}Users{% endblock %}
+{% block body_data %}data-use-modal="true"{% endblock %}
+{% block modal_title %}Delete User{% endblock %}
+{% block modal_cancel_url %}{% url 'custom_admin:user_detail' user.id %}{% endblock %}
+
+{% block modal_content %}
+<div class="text-center py-4">
+    <div class="w-16 h-16 rounded-full bg-rose-500/15 flex items-center justify-center mx-auto mb-5">
+        <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+    </div>
+    <h3 class="text-lg font-bold text-white mb-2">Are you sure?</h3>
+    <p class="text-slate-400 text-sm mb-2">You are about to permanently delete the user account:</p>
+    <p class="text-white font-semibold text-base mb-1">{{ user.username }}</p>
+    <p class="text-slate-500 text-xs mb-8">{{ user.get_full_name }} &middot; {{ user.email }}</p>
+    <p class="text-rose-400/80 text-xs mb-8 font-semibold uppercase tracking-wider">All orders, bookings, and data for this user will be removed</p>
+
+    <form method="post" class="flex gap-3 justify-center">
+        {% csrf_token %}
+        <a href="{% url 'custom_admin:user_detail' user.id %}"
+           class="px-6 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-semibold text-sm hover:bg-slate-700 transition-colors">
+            Cancel
+        </a>
+        <button type="submit"
+                class="px-6 py-2.5 rounded-xl bg-rose-500 text-white font-semibold text-sm hover:bg-rose-600 transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            Yes, Delete
+        </button>
+    </form>
+</div>
+{% endblock %}

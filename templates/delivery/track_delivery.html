@@ -1,0 +1,274 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Track Delivery — Order #{{ order.id }} | GCIAP{% endblock %}
+{% block meta_description %}Track the delivery status of your GCIAP order #{{ order.id }} in real time.{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
+<div class="max-w-4xl mx-auto">
+
+    <!-- ── Page header ───────────────────────────────────────── -->
+    <div class="text-center mb-12 animate-item">
+        <p class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-3">Live Tracking</p>
+        <h1 class="font-boa text-5xl md:text-6xl text-gradient mb-3">Order #{{ order.id }}</h1>
+        <p class="text-slate-400">
+            Placed on {{ order.created_at|date:"d M Y" }}
+            &nbsp;·&nbsp;
+            <span class="font-semibold text-white">₹{{ order.total_amount }}</span>
+        </p>
+    </div>
+
+    <!-- ── Delivery info bar (only when delivery exists) ─────── -->
+    {% if delivery %}
+    <div class="animate-item grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-5 text-center hover-lift">
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Tracking ID</p>
+            <p class="text-white font-mono font-semibold text-sm truncate">{{ delivery.tracking_number }}</p>
+        </div>
+        <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-5 text-center hover-lift">
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Carrier</p>
+            <p class="text-white font-semibold text-sm">{{ delivery.delivery_partner }}</p>
+        </div>
+        <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-5 text-center hover-lift">
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Est. Delivery</p>
+            <p class="text-white font-semibold text-sm">{{ delivery.estimated_delivery_date|date:"d M Y" }}</p>
+        </div>
+        <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-5 text-center hover-lift">
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Status</p>
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold
+                {% if delivery.status == 'pending' %}bg-yellow-500/20 text-yellow-400
+                {% elif delivery.status == 'in_transit' %}bg-blue-500/20 text-blue-400
+                {% elif delivery.status == 'out_for_delivery' %}bg-purple-500/20 text-purple-400
+                {% elif delivery.status == 'delivered' %}bg-emerald-500/20 text-emerald-400
+                {% else %}bg-rose-500/20 text-rose-400{% endif %}">
+                {{ delivery.get_status_display }}
+            </span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ── Visual Progress Pipeline ──────────────────────────── -->
+    <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 mb-8">
+        <h2 class="text-base font-bold text-slate-400 uppercase tracking-widest mb-8">Delivery Progress</h2>
+
+        {% comment %}
+        Determine which stage is active.
+        0 = Order Placed  (always done)
+        1 = Processing / Pending
+        2 = In Transit
+        3 = Out for Delivery
+        4 = Delivered
+        {% endcomment %}
+
+        {% if not delivery %}
+            {% with active=0 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
+        {% elif delivery.status == 'pending' %}
+            {% with active=1 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
+        {% elif delivery.status == 'in_transit' %}
+            {% with active=2 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
+        {% elif delivery.status == 'out_for_delivery' %}
+            {% with active=3 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
+        {% elif delivery.status == 'delivered' %}
+            {% with active=4 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
+        {% else %}
+            {% with active=0 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
+        {% endif %}
+
+        <!-- Current location pill -->
+        {% if delivery and delivery.current_location %}
+        <div class="mt-6 flex items-center gap-2 justify-center">
+            <span class="w-2 h-2 rounded-full bg-purple-400 animate-ping inline-block"></span>
+            <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            </svg>
+            <p class="text-slate-300 text-sm font-medium">Currently at: <span class="text-white font-bold">{{ delivery.current_location }}</span></p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ── Tracking Timeline ──────────────────────────────────── -->
+    <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 mb-8">
+        <h2 class="text-base font-bold text-slate-400 uppercase tracking-widest mb-6">Tracking Timeline</h2>
+
+        <!-- Always show the "Order Placed" starting event -->
+        <div class="relative">
+
+            <!-- Order placed — always first -->
+            <div class="flex gap-5 group">
+                <div class="flex flex-col items-center shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border-2 border-emerald-500/50
+                                flex items-center justify-center z-10 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <div class="w-0.5 flex-1 bg-gradient-to-b from-emerald-500/50 to-slate-700/30 mt-1"></div>
+                </div>
+                <div class="pb-7 flex-1">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-white font-semibold">Order Placed</p>
+                            <p class="text-slate-400 text-sm mt-0.5">Your order has been received and is being processed</p>
+                        </div>
+                        <span class="text-slate-500 text-xs shrink-0 ml-4">{{ order.created_at|date:"d M · H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if tracking_updates %}
+                {% for update in tracking_updates reversed %}
+                <div class="flex gap-5 group timeline-item">
+                    <div class="flex flex-col items-center shrink-0">
+                        <div class="w-10 h-10 rounded-xl
+                                    {% if forloop.last %}gradient-primary ring-2 ring-purple-400/40 shadow-lg shadow-purple-500/20{% else %}bg-slate-700/60 border border-slate-600{% endif %}
+                                    flex items-center justify-center z-10 transition-all duration-300 group-hover:scale-110">
+                            {% if forloop.last %}
+                            <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+                            {% else %}
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            {% endif %}
+                        </div>
+                        {% if not forloop.last %}
+                        <div class="w-0.5 flex-1 bg-slate-700/50 mt-1"></div>
+                        {% endif %}
+                    </div>
+                    <div class="{% if not forloop.last %}pb-7{% endif %} flex-1">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="{% if forloop.last %}text-white font-bold{% else %}text-slate-300 font-medium{% endif %}">
+                                    {{ update.status_update }}
+                                </p>
+                                {% if update.location %}
+                                <p class="text-slate-500 text-sm mt-0.5 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-purple-400/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    </svg>
+                                    {{ update.location }}
+                                </p>
+                                {% endif %}
+                            </div>
+                            <span class="text-slate-500 text-xs shrink-0 ml-4">{{ update.timestamp|date:"d M · H:i" }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- No tracking updates yet — show "awaiting shipment" placeholder -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center shrink-0">
+                        <div class="w-10 h-10 rounded-xl border-2 border-dashed border-slate-600 flex items-center justify-center animate-pulse">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+                        </div>
+                    </div>
+                    <div class="flex-1 pt-2">
+                        <p class="text-slate-500 font-medium italic">Awaiting shipment update…</p>
+                        <p class="text-slate-600 text-sm mt-0.5">Tracking details will appear here once dispatched</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ── Order items summary ───────────────────────────────── -->
+    <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 mb-8">
+        <h2 class="text-base font-bold text-slate-400 uppercase tracking-widest mb-5">Order Items</h2>
+        <div class="space-y-3">
+            {% for item in order.items.all %}
+            <div class="flex items-center justify-between py-3 border-b border-slate-700/40 last:border-0">
+                <div class="flex items-center gap-3">
+                    {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                         class="w-12 h-12 rounded-xl object-cover border border-slate-700/50">
+                    {% else %}
+                    <div class="w-12 h-12 rounded-xl bg-slate-700/50 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <p class="text-white font-medium text-sm">{{ item.product.name }}</p>
+                        <p class="text-slate-500 text-xs">Qty: {{ item.quantity }}</p>
+                    </div>
+                </div>
+                <p class="text-slate-300 font-semibold text-sm">₹{{ item.price }}</p>
+            </div>
+            {% empty %}
+            <p class="text-slate-500 text-sm italic">No items found.</p>
+            {% endfor %}
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-700/50 flex justify-between">
+            <span class="text-slate-400 font-medium">Total</span>
+            <span class="text-white font-bold text-lg">₹{{ order.total_amount }}</span>
+        </div>
+    </div>
+
+    <!-- ── Shipping address ──────────────────────────────────── -->
+    <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 mb-8">
+        <h2 class="text-base font-bold text-slate-400 uppercase tracking-widest mb-4">Shipping Address</h2>
+        <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-purple-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <p class="text-slate-300 leading-relaxed">{{ order.shipping_address }}</p>
+        </div>
+    </div>
+
+    <!-- ── Back button ───────────────────────────────────────── -->
+    <div class="animate-item flex gap-4">
+        <a href="{% url 'users:booking_history' %}"
+           class="flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-600 text-slate-300
+                  hover:text-white hover:border-slate-400 hover:bg-slate-800/50 transition-all duration-300">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Orders
+        </a>
+    </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Stagger entrance
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(120),
+        easing: 'easeOutExpo'
+    });
+
+    // Timeline items entrance
+    anime({
+        targets: '.timeline-item',
+        opacity: [0, 1],
+        translateX: [-20, 0],
+        duration: 600,
+        delay: anime.stagger(80, { start: 500 }),
+        easing: 'easeOutCubic'
+    });
+
+    // Progress step nodes pop in
+    anime({
+        targets: '.step-node',
+        scale: [0, 1],
+        opacity: [0, 1],
+        duration: 500,
+        delay: anime.stagger(120, { start: 300 }),
+        easing: 'easeOutBack'
+    });
+</script>
+{% endblock %}

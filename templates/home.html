@@ -1,0 +1,337 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════════
+     INTRO ANIMATION SPLASH — plays GCIAP_LOGO_ANIMATION.mp4
+     Auto-hides when video ends. Skippable. Runs once per session.
+══════════════════════════════════════════════ -->
+<div id="intro-splash"
+     class="fixed inset-0 z-[999] flex items-center justify-center bg-[#020617]"
+     style="opacity:1; transition: opacity 0.8s ease;">
+
+    <!-- Subtle radial glow behind video -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]
+                    bg-purple-600/20 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px]
+                    bg-blue-600/15 rounded-full blur-2xl"></div>
+    </div>
+
+    <!-- Video -->
+    <video id="intro-video"
+           src="{% static 'images/icons/GCIAP_LOGO_ANIMATION.mp4' %}"
+           class="relative z-10 max-w-xs sm:max-w-sm w-full"
+           autoplay muted playsinline
+           style="border-radius:1.5rem;">
+    </video>
+
+    <!-- Skip button -->
+    <button id="intro-skip"
+            onclick="skipIntro()"
+            class="absolute bottom-10 right-10 z-20 px-5 py-2 rounded-xl
+                   bg-slate-800/80 border border-slate-700 text-slate-400 text-sm
+                   hover:text-white hover:bg-slate-700 hover:border-slate-500
+                   transition-all duration-200 backdrop-blur-sm"
+            style="opacity:0; animation: fadeInSkip 0.4s 1.5s ease forwards;">
+        Skip ›
+    </button>
+</div>
+
+<style>
+    @keyframes fadeInSkip { to { opacity: 1; } }
+
+    /* Prevent scroll while splash is visible */
+    body.intro-active { overflow: hidden; }
+</style>
+
+<script>
+(function () {
+    const splash  = document.getElementById('intro-splash');
+    const video   = document.getElementById('intro-video');
+    const SEEN_KEY = 'gciap_intro_seen';
+
+    // Only play once per session
+    if (sessionStorage.getItem(SEEN_KEY)) {
+        splash.style.display = 'none';
+        return;
+    }
+
+    document.body.classList.add('intro-active');
+
+    function hideSplash() {
+        sessionStorage.setItem(SEEN_KEY, '1');
+        splash.style.opacity = '0';
+        document.body.classList.remove('intro-active');
+        setTimeout(function () { splash.style.display = 'none'; }, 850);
+    }
+
+    // Hide when video finishes
+    video.addEventListener('ended', hideSplash);
+
+    // Fallback — max 3.5 s
+    setTimeout(hideSplash, 3500);
+
+    window.skipIntro = hideSplash;
+})();
+</script>
+
+
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Hero background image -->
+    <div class="absolute inset-0">
+        <img src="{% static 'images/hero/hero-bg.png' %}" alt=""
+             class="w-full h-full object-cover object-center">
+        <!-- Dark gradient overlay so text stays readable -->
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/60 to-slate-900/90"></div>
+    </div>
+    <!-- Floating colour blobs on top of image for depth -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-float" style="animation-delay: -1.5s;"></div>
+        <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-float" style="animation-delay: -3s;"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="hero-title font-boa text-5xl md:text-7xl lg:text-8xl text-white mb-6">
+            <span class="text-gradient">GCIAP</span>
+        </h1>
+        <p class="hero-subtitle text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-8">
+            Global Construction and Interior Assistance Platform
+        </p>
+        <p class="hero-desc text-lg text-slate-400 max-w-2xl mx-auto mb-12">
+            Connect with world-class professionals, browse premium products, and bring your dream spaces to life.
+        </p>
+        
+        <div class="hero-buttons flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'professionals:professional_list' %}" class="group px-8 py-4 rounded-xl gradient-primary text-white font-semibold text-lg hover:opacity-90 transition-all duration-300 btn-glow flex items-center justify-center gap-2">
+                <span>Find Professionals</span>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+            <a href="{% url 'products:product_list' %}" class="px-8 py-4 rounded-xl border-2 border-slate-600 text-white font-semibold text-lg hover:border-slate-400 hover:bg-slate-800/50 transition-all duration-300 flex items-center justify-center gap-2">
+                <span>Browse Products</span>
+            </a>
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="stat-item text-center">
+                <p class="text-4xl md:text-5xl font-bold text-gradient">500+</p>
+                <p class="text-slate-400 mt-2">Professionals</p>
+            </div>
+            <div class="stat-item text-center">
+                <p class="text-4xl md:text-5xl font-bold text-gradient">2000+</p>
+                <p class="text-slate-400 mt-2">Products</p>
+            </div>
+            <div class="stat-item text-center">
+                <p class="text-4xl md:text-5xl font-bold text-gradient">50+</p>
+                <p class="text-slate-400 mt-2">Countries</p>
+            </div>
+            <div class="stat-item text-center">
+                <p class="text-4xl md:text-5xl font-bold text-gradient">10k+</p>
+                <p class="text-slate-400 mt-2">Happy Clients</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-24 bg-slate-800/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="animate-item text-4xl md:text-5xl font-bold text-white mb-4">Our <span class="text-gradient">Services</span></h2>
+            <p class="animate-item text-slate-400 max-w-2xl mx-auto">Everything you need for your construction and interior design projects</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Service Cards -->
+            <div class="animate-item service-card group p-8 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500 hover-lift card-shine">
+                <div class="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Interior Designers</h3>
+                <p class="text-slate-400">Connect with talented interior designers who can transform your living spaces into stunning masterpieces.</p>
+            </div>
+            
+            <div class="animate-item service-card group p-8 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500 hover-lift card-shine">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Exterior Designers</h3>
+                <p class="text-slate-400">Enhance your building's curb appeal with expert exterior designers who understand architecture.</p>
+            </div>
+            
+            <div class="animate-item service-card group p-8 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-green-500/50 transition-all duration-500 hover-lift card-shine">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Architects</h3>
+                <p class="text-slate-400">Work with professional architects to design your dream building from the ground up.</p>
+            </div>
+            
+            <div class="animate-item service-card group p-8 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-orange-500/50 transition-all duration-500 hover-lift card-shine">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Workers & Contractors</h3>
+                <p class="text-slate-400">Find skilled workers and contractors for all types of construction and renovation work.</p>
+            </div>
+            
+            <div class="animate-item service-card group p-8 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-pink-500/50 transition-all duration-500 hover-lift card-shine">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Global Products</h3>
+                <p class="text-slate-400">Browse furniture, decor, and construction materials from suppliers around the world.</p>
+            </div>
+            
+            <div class="animate-item service-card group p-8 rounded-2xl bg-slate-800/50 border border-slate-700/50 hover:border-indigo-500/50 transition-all duration-500 hover-lift card-shine">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Budget Options</h3>
+                <p class="text-slate-400">Choose from low, medium, and high budget options to match your financial requirements.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="animate-item text-4xl md:text-5xl font-bold text-white mb-4">How It <span class="text-gradient">Works</span></h2>
+            <p class="animate-item text-slate-400 max-w-2xl mx-auto">Simple steps to bring your vision to reality</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="animate-item text-center">
+                <div class="w-16 h-16 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-white">1</div>
+                <h3 class="text-xl font-semibold text-white mb-3">Browse</h3>
+                <p class="text-slate-400">Explore our wide range of professionals and products</p>
+            </div>
+            <div class="animate-item text-center">
+                <div class="w-16 h-16 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-white">2</div>
+                <h3 class="text-xl font-semibold text-white mb-3">Select</h3>
+                <p class="text-slate-400">Choose the perfect match for your budget and style</p>
+            </div>
+            <div class="animate-item text-center">
+                <div class="w-16 h-16 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-white">3</div>
+                <h3 class="text-xl font-semibold text-white mb-3">Book</h3>
+                <p class="text-slate-400">Schedule consultations or place orders easily</p>
+            </div>
+            <div class="animate-item text-center">
+                <div class="w-16 h-16 rounded-full gradient-primary flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-white">4</div>
+                <h3 class="text-xl font-semibold text-white mb-3">Enjoy</h3>
+                <p class="text-slate-400">Watch your dream space come to life</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-24 relative overflow-hidden">
+    <!-- CTA background image -->
+    <div class="absolute inset-0">
+        <img src="{% static 'images/hero/about-bg.png' %}" alt=""
+             class="w-full h-full object-cover object-center">
+        <div class="absolute inset-0 bg-slate-900/80"></div>
+        <div class="absolute inset-0 gradient-primary opacity-10"></div>
+    </div>
+    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="animate-item text-4xl md:text-5xl font-bold text-white mb-6">Ready to Transform Your Space?</h2>
+        <p class="animate-item text-xl text-slate-300 mb-8">Join thousands of satisfied customers who have already brought their dream spaces to life.</p>
+        <div class="animate-item flex flex-col sm:flex-row gap-4 justify-center">
+            {% if user.is_authenticated %}
+                <a href="{% url 'professionals:professional_list' %}" class="px-8 py-4 rounded-xl gradient-primary text-white font-semibold text-lg hover:opacity-90 transition-all duration-300 btn-glow">
+                    Start Your Project
+                </a>
+            {% else %}
+                <a href="{% url 'users:register' %}" class="px-8 py-4 rounded-xl gradient-primary text-white font-semibold text-lg hover:opacity-90 transition-all duration-300 btn-glow">
+                    Get Started Free
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Hero animations
+    anime.timeline({
+        easing: 'easeOutExpo'
+    })
+    .add({
+        targets: '.hero-title',
+        opacity: [0, 1],
+        translateY: [50, 0],
+        duration: 1200
+    })
+    .add({
+        targets: '.hero-subtitle',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 1000
+    }, '-=800')
+    .add({
+        targets: '.hero-desc',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 1000
+    }, '-=800')
+    .add({
+        targets: '.hero-buttons',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 1000
+    }, '-=800')
+    .add({
+        targets: '.stat-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(100)
+    }, '-=600');
+    
+    // Counter animation for stats
+    document.querySelectorAll('.stat-item p:first-child').forEach(counter => {
+        const target = parseInt(counter.textContent);
+        anime({
+            targets: counter,
+            innerHTML: [0, target],
+            round: 1,
+            duration: 2000,
+            delay: 500,
+            easing: 'easeOutExpo',
+            update: function(anim) {
+                counter.innerHTML = Math.round(anim.animations[0].currentValue) + '+';
+            }
+        });
+    });
+</script>
+{% endblock %}

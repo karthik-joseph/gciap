@@ -1,0 +1,145 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Add Portfolio - GCIAP{% endblock %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header -->
+        <div class="animate-item text-center mb-10">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30 mb-6">
+                <svg class="w-10 h-10 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+            <h2 class="font-boa text-4xl text-gradient">Add Portfolio Item</h2>
+            <p class="mt-3 text-slate-400">Showcase your work by adding a project to your portfolio</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8 shadow-2xl">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="p-4 rounded-xl bg-rose-500/20 border border-rose-500/50 text-rose-400 text-sm">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Title -->
+                <div>
+                    <label for="id_title" class="block text-sm font-bold text-slate-300 mb-2">
+                        Project Title <span class="text-rose-400">*</span>
+                    </label>
+                    <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}"
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                        placeholder="e.g. Modern Living Room Design" required>
+                    {% if form.title.errors %}
+                        <p class="mt-2 text-sm text-rose-400">{{ form.title.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="id_description" class="block text-sm font-bold text-slate-300 mb-2">
+                        Description <span class="text-rose-400">*</span>
+                    </label>
+                    <textarea name="description" id="id_description" rows="4"
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 resize-none"
+                        placeholder="Describe the project, materials used, challenges overcome..." required>{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.errors %}
+                        <p class="mt-2 text-sm text-rose-400">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Image Upload -->
+                <div>
+                    <label for="id_image" class="block text-sm font-bold text-slate-300 mb-2">
+                        Project Image <span class="text-rose-400">*</span>
+                    </label>
+                    <!-- Preview Area -->
+                    <div id="imagePreviewArea" class="mb-3 hidden">
+                        <div class="relative w-full h-48 rounded-xl overflow-hidden border border-slate-600">
+                            <img id="imagePreview" src="" alt="Preview" class="w-full h-full object-cover">
+                            <button type="button" onclick="clearImage()" class="absolute top-3 right-3 w-8 h-8 rounded-lg bg-black/60 text-white flex items-center justify-center hover:bg-rose-500/80 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Upload Button -->
+                    <label for="id_image" id="uploadLabel" class="flex flex-col items-center justify-center w-full h-36 rounded-xl border-2 border-dashed border-slate-600 hover:border-purple-500/50 bg-slate-900/30 cursor-pointer transition-all duration-300 group">
+                        <svg class="w-10 h-10 text-slate-500 group-hover:text-purple-400 transition-colors mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        <span class="text-sm text-slate-400 group-hover:text-purple-400 transition-colors">Click to upload image</span>
+                        <span class="text-xs text-slate-600 mt-1">PNG, JPG, WEBP up to 5MB</span>
+                    </label>
+                    <input type="file" name="image" id="id_image" accept="image/*" class="hidden" onchange="previewImage(this)" required>
+                    {% if form.image.errors %}
+                        <p class="mt-2 text-sm text-rose-400">{{ form.image.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Project Date -->
+                <div>
+                    <label for="id_project_date" class="block text-sm font-bold text-slate-300 mb-2">
+                        Project Date <span class="text-rose-400">*</span>
+                    </label>
+                    <input type="date" name="project_date" id="id_project_date" value="{{ form.project_date.value|default:'' }}"
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300" required>
+                    {% if form.project_date.errors %}
+                        <p class="mt-2 text-sm text-rose-400">{{ form.project_date.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="flex-1 py-3 px-4 rounded-xl gradient-primary text-white font-semibold hover:opacity-90 transition-all duration-300 btn-glow flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add to Portfolio
+                    </button>
+                    <a href="{% url 'professionals:dashboard' %}" class="px-6 py-3 rounded-xl border border-slate-600 text-slate-400 hover:text-white hover:border-slate-500 transition-all duration-300 font-medium flex items-center">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Image preview
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imagePreview').src = e.target.result;
+                document.getElementById('imagePreviewArea').classList.remove('hidden');
+                document.getElementById('uploadLabel').classList.add('hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function clearImage() {
+        document.getElementById('id_image').value = '';
+        document.getElementById('imagePreviewArea').classList.add('hidden');
+        document.getElementById('uploadLabel').classList.remove('hidden');
+    }
+
+    // Entrance animation
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(150),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}

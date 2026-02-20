@@ -1,0 +1,64 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="text-center mb-8">
+            <h1 class="animate-item font-boa text-4xl text-gradient mb-4">Create Quotation</h1>
+            <p class="animate-item text-slate-400">Get a project estimate</p>
+        </div>
+        
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Project Title</label>
+                    <input type="text" name="project_title" required
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                        placeholder="e.g., Living Room Redesign">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Description</label>
+                    <textarea name="project_description" rows="4" required
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                        placeholder="Describe your project requirements..."></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Budget Estimate (₹)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
+                        <input type="number" name="budget_estimate" step="0.01" min="1" required
+                            class="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                            placeholder="50000.00">
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500">All prices are in Indian Rupees (₹)</p>
+                </div>
+                
+                <button type="submit" class="w-full py-4 rounded-xl gradient-primary text-white font-semibold text-lg hover:opacity-90 transition-all duration-300 btn-glow">
+                    Create Quotation
+                </button>
+                
+                <a href="{% url 'quotations:quotation_list' %}" class="block w-full py-3 text-center rounded-xl border border-slate-600 text-white font-medium hover:bg-slate-700/50 transition-all duration-300">
+                    Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(100),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}

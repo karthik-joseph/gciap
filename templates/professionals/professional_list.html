@@ -1,0 +1,200 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Find Professionals | GCIAP{% endblock %}
+{% block meta_description %}Connect with expert interior designers, architects, and contractors on GCIAP.{% endblock %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+<div class="max-w-7xl mx-auto">
+
+    <!-- ── Header ─────────────────────────────── -->
+    <div class="text-center mb-12">
+        <h1 class="animate-item font-boa text-4xl md:text-5xl text-gradient mb-4">Find Professionals</h1>
+        <p class="animate-item text-slate-400 max-w-2xl mx-auto">Connect with expert designers, architects, and contractors worldwide</p>
+    </div>
+
+    <!-- ── Filters ────────────────────────────── -->
+    <div class="animate-item mb-8">
+        <form method="get" class="bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6">
+            <div class="flex flex-wrap gap-4 items-end">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Professional Type</label>
+                    <select name="type" class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300">
+                        <option value="">All Types</option>
+                        <option value="interior_designer" {% if request.GET.type == 'interior_designer' %}selected{% endif %}>Interior Designer</option>
+                        <option value="exterior_designer" {% if request.GET.type == 'exterior_designer' %}selected{% endif %}>Exterior Designer</option>
+                        <option value="architect"         {% if request.GET.type == 'architect' %}selected{% endif %}>Architect</option>
+                        <option value="worker"            {% if request.GET.type == 'worker' %}selected{% endif %}>Worker</option>
+                        <option value="contractor"        {% if request.GET.type == 'contractor' %}selected{% endif %}>Contractor</option>
+                    </select>
+                </div>
+                <button type="submit" class="px-8 py-3 rounded-xl gradient-primary text-white font-semibold hover:opacity-90 transition-all duration-300">
+                    Apply Filters
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         sk-section
+    ══════════════════════════════════════════════════════════ -->
+    <div id="professional-section" class="sk-section">
+
+        <!-- ── SKELETON (6 cards) ──────────────────────────── -->
+        <div class="sk-placeholder grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for i in "123456" %}
+            <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
+                <!-- avatar + name row -->
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="sk sk-circle" style="--sk-w:56px;--sk-h:56px"></div>
+                    <div class="flex-1 space-y-2">
+                        <div class="sk sk-text" style="--sk-w:65%;--sk-h:18px"></div>
+                        <div class="sk sk-round" style="--sk-w:110px;--sk-h:22px"></div>
+                    </div>
+                </div>
+                <!-- stats row -->
+                <div class="flex gap-4 mb-5">
+                    <div class="sk sk-text" style="--sk-w:90px;--sk-h:13px"></div>
+                    <div class="sk sk-round" style="--sk-w:70px;--sk-h:13px"></div>
+                </div>
+                <!-- bio lines -->
+                <div class="space-y-2 mb-6">
+                    <div class="sk sk-text" style="--sk-w:100%;--sk-h:12px"></div>
+                    <div class="sk sk-text" style="--sk-w:80%;--sk-h:12px"></div>
+                </div>
+                <!-- button -->
+                <div class="sk sk-square" style="--sk-w:100%;--sk-h:44px"></div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Real content OR inline empty state (server-side rendered) -->
+        <div class="sk-content">
+            {% if professionals %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for professional in professionals %}
+                    <div data-sk-item
+                         class="animate-item group bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50
+                                 overflow-hidden hover:border-purple-500/50 transition-all duration-500 hover-lift card-shine">
+                        <div class="p-6">
+                            <!-- Avatar + name -->
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 rounded-full gradient-primary flex items-center justify-center
+                                            text-xl font-bold text-white shrink-0 shadow-lg shadow-purple-500/20">
+                                    {{ professional.user.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white group-hover:text-purple-400 transition-colors">
+                                        {{ professional.user.get_full_name|default:professional.user.username }}
+                                    </h3>
+                                    <span class="inline-block px-3 py-1 text-xs rounded-full bg-purple-500/20 text-purple-400 font-semibold mt-0.5">
+                                        {{ professional.get_professional_type_display }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="flex items-center gap-4 mb-4 text-sm text-slate-400">
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>{{ professional.experience_years }} yrs exp</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full
+                                        {% if professional.is_available %}bg-emerald-400{% else %}bg-rose-400{% endif %}">
+                                    </span>
+                                    <span class="{% if professional.is_available %}text-emerald-400{% else %}text-rose-400{% endif %}">
+                                        {% if professional.is_available %}Available{% else %}Busy{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Bio -->
+                            <p class="text-slate-400 text-sm mb-5 line-clamp-2 leading-relaxed">
+                                {{ professional.bio|truncatewords:20 }}
+                            </p>
+
+                            <!-- Action -->
+                            <a href="{% url 'professionals:professional_detail' professional.id %}"
+                               class="block w-full py-3 text-center rounded-xl border border-slate-600 text-white font-semibold text-sm
+                                      hover:bg-slate-700/50 hover:border-purple-500 hover:text-purple-400 transition-all duration-300">
+                                View Profile →
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+                <!-- Empty state — shown directly by Django when no results -->
+                <div class="flex flex-col items-center justify-center py-24 px-6 text-center">
+                    <!-- Icon with glow ring -->
+                    <div class="relative mb-6">
+                        <div class="absolute inset-0 rounded-full bg-purple-500/10 blur-2xl scale-150"></div>
+                        <div class="relative w-24 h-24 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    {% if selected_type_label %}
+                        <h3 class="text-xl font-bold text-white mb-2">
+                            No <span class="text-purple-400">{{ selected_type_label }}</span> Found
+                        </h3>
+                        <p class="text-slate-400 text-sm max-w-xs mb-6">
+                            There are no available <strong class="text-slate-300">{{ selected_type_label }}</strong> registered yet. Try a different professional type or check back later.
+                        </p>
+                    {% else %}
+                        <h3 class="text-xl font-bold text-white mb-2">No Professionals Found</h3>
+                        <p class="text-slate-400 text-sm max-w-xs mb-6">
+                            No professionals are currently available. Try adjusting your filters or check back later.
+                        </p>
+                    {% endif %}
+
+                    <!-- Actions -->
+                    <div class="flex flex-wrap gap-3 justify-center">
+                        <a href="?"
+                           class="px-5 py-2.5 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30
+                                  text-sm font-medium hover:bg-purple-500/30 hover:border-purple-400 transition-all duration-300">
+                            ✕ Clear Filter
+                        </a>
+                        <a href="{% url 'professionals:professional_list' %}"
+                           class="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-400
+                                  text-sm font-medium hover:text-white hover:border-slate-500 transition-all duration-300">
+                            View All Professionals
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+    </div><!-- /#professional-section -->
+
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            anime({
+                targets: '[data-sk-item]',
+                opacity: [0, 1],
+                translateY: [24, 0],
+                scale: [0.97, 1],
+                duration: 700,
+                delay: anime.stagger(70),
+                easing: 'easeOutExpo'
+            });
+        }, 360);
+    });
+</script>
+{% endblock %}

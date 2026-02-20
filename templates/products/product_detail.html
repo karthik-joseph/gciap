@@ -1,0 +1,111 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Product Image -->
+            <div class="animate-item">
+                <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                    <div class="aspect-square bg-slate-700">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center">
+                            <svg class="w-32 h-32 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="animate-item">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="px-3 py-1 rounded-full bg-slate-700 text-slate-300 text-sm">
+                        {{ product.get_category_display }}
+                    </span>
+                    <span class="px-3 py-1 rounded-full 
+                        {% if product.budget_level == 'low' %}bg-green-500/20 text-green-400{% elif product.budget_level == 'medium' %}bg-blue-500/20 text-blue-400{% else %}bg-purple-500/20 text-purple-400{% endif %} text-sm">
+                        {{ product.get_budget_level_display }}
+                    </span>
+                </div>
+                
+                <h1 class="font-boa text-4xl text-gradient mb-4">{{ product.name }}</h1>
+                
+                <p class="text-slate-300 mb-8">{{ product.description }}</p>
+                
+                <div class="text-4xl font-bold text-gradient mb-8">₹{{ product.price }}</div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                        <p class="text-slate-500 text-sm">Supplier Country</p>
+                        <p class="text-white font-semibold flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            </svg>
+                            {{ product.supplier_country }}
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                        <p class="text-slate-500 text-sm">Shipping Cost</p>
+                        <p class="text-white font-semibold flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                            </svg>
+                            ₹{{ product.shipping_cost }}
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                        <p class="text-slate-500 text-sm">Delivery Time</p>
+                        <p class="text-white font-semibold flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            {{ product.delivery_days }} days
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                        <p class="text-slate-500 text-sm">In Stock</p>
+                        <p class="text-white font-semibold flex items-center gap-2">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            {{ product.stock_quantity }} units
+                        </p>
+                    </div>
+                </div>
+                
+                {% if user.is_authenticated %}
+                <a href="{% url 'products:add_to_cart' product.id %}" class="block w-full py-4 text-center rounded-xl gradient-primary text-white font-semibold text-lg hover:opacity-90 transition-all duration-300 btn-glow">
+                    Add to Cart
+                </a>
+                {% else %}
+                <a href="{% url 'users:login' %}" class="block w-full py-4 text-center rounded-xl gradient-primary text-white font-semibold text-lg hover:opacity-90 transition-all duration-300 btn-glow">
+                    Login to Purchase
+                </a>
+                {% endif %}
+                
+                <a href="{% url 'products:product_list' %}" class="block w-full mt-3 py-3 text-center rounded-xl border border-slate-600 text-white font-medium hover:bg-slate-700/50 transition-all duration-300">
+                    Back to Products
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(100),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}

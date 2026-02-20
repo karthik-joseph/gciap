@@ -1,0 +1,129 @@
+{% comment %}
+  Reusable delivery progress pipeline.
+  Expects: `active` = integer 0-4 indicating the current step index.
+  Steps:
+    0 = Order Placed
+    1 = Processing
+    2 = In Transit
+    3 = Out for Delivery
+    4 = Delivered
+{% endcomment %}
+
+{% load static %}
+
+<div class="flex items-start gap-0 w-full select-none">
+
+    <!-- Step 1: Order Placed -->
+    <div class="flex flex-col items-center flex-1">
+        <div class="step-node relative w-12 h-12 rounded-2xl flex items-center justify-center mb-3
+            {% if active >= 0 %}bg-emerald-500/20 border-2 border-emerald-500 shadow-lg shadow-emerald-500/20
+            {% else %}bg-slate-800 border-2 border-slate-700{% endif %}">
+            {% if active >= 0 %}
+            <div class="absolute inset-0 rounded-2xl bg-emerald-500/20 animate-ping opacity-50"></div>
+            {% endif %}
+            <svg class="w-6 h-6 relative z-10 {% if active >= 0 %}text-emerald-400{% else %}text-slate-600{% endif %}"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+        </div>
+        <p class="text-[11px] font-bold text-center leading-tight
+            {% if active >= 0 %}text-emerald-400{% else %}text-slate-600{% endif %}">
+            Order<br>Placed
+        </p>
+    </div>
+
+    <!-- Connector 1→2 -->
+    <div class="flex-1 h-0.5 mt-6 mx-1 rounded-full
+        {% if active >= 1 %}bg-gradient-to-r from-emerald-500 to-blue-500{% else %}bg-slate-700{% endif %}"></div>
+
+    <!-- Step 2: Processing -->
+    <div class="flex flex-col items-center flex-1">
+        <div class="step-node relative w-12 h-12 rounded-2xl flex items-center justify-center mb-3
+            {% if active >= 1 %}gradient-primary border-2 border-purple-400 shadow-lg shadow-purple-500/30
+            {% elif active == 1 %}bg-slate-800 border-2 border-blue-500 animate-pulse
+            {% else %}bg-slate-800 border-2 border-slate-700{% endif %}">
+            {% if active == 1 %}
+            <div class="absolute inset-0 rounded-2xl bg-purple-500/20 animate-ping opacity-60"></div>
+            {% endif %}
+            <svg class="w-6 h-6 relative z-10 {% if active >= 1 %}text-white{% else %}text-slate-600{% endif %}"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+            </svg>
+        </div>
+        <p class="text-[11px] font-bold text-center leading-tight
+            {% if active >= 1 %}text-purple-300{% else %}text-slate-600{% endif %}">
+            Processing
+        </p>
+    </div>
+
+    <!-- Connector 2→3 -->
+    <div class="flex-1 h-0.5 mt-6 mx-1 rounded-full
+        {% if active >= 2 %}bg-gradient-to-r from-blue-500 to-purple-500{% else %}bg-slate-700{% endif %}"></div>
+
+    <!-- Step 3: In Transit -->
+    <div class="flex flex-col items-center flex-1">
+        <div class="step-node relative w-12 h-12 rounded-2xl flex items-center justify-center mb-3
+            {% if active >= 2 %}gradient-primary border-2 border-blue-400 shadow-lg shadow-blue-500/30
+            {% else %}bg-slate-800 border-2 border-slate-700{% endif %}">
+            {% if active == 2 %}
+            <div class="absolute inset-0 rounded-2xl bg-blue-500/20 animate-ping opacity-60"></div>
+            {% endif %}
+            <svg class="w-6 h-6 relative z-10 {% if active >= 2 %}text-white{% else %}text-slate-600{% endif %}"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+            </svg>
+        </div>
+        <p class="text-[11px] font-bold text-center leading-tight
+            {% if active >= 2 %}text-blue-300{% else %}text-slate-600{% endif %}">
+            In<br>Transit
+        </p>
+    </div>
+
+    <!-- Connector 3→4 -->
+    <div class="flex-1 h-0.5 mt-6 mx-1 rounded-full
+        {% if active >= 3 %}bg-gradient-to-r from-purple-500 to-orange-400{% else %}bg-slate-700{% endif %}"></div>
+
+    <!-- Step 4: Out for Delivery -->
+    <div class="flex flex-col items-center flex-1">
+        <div class="step-node relative w-12 h-12 rounded-2xl flex items-center justify-center mb-3
+            {% if active >= 3 %}bg-gradient-to-br from-orange-500 to-amber-400 border-2 border-amber-400 shadow-lg shadow-amber-500/30
+            {% else %}bg-slate-800 border-2 border-slate-700{% endif %}">
+            {% if active == 3 %}
+            <div class="absolute inset-0 rounded-2xl bg-amber-500/20 animate-ping opacity-60"></div>
+            {% endif %}
+            <svg class="w-6 h-6 relative z-10 {% if active >= 3 %}text-white{% else %}text-slate-600{% endif %}"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+        </div>
+        <p class="text-[11px] font-bold text-center leading-tight
+            {% if active >= 3 %}text-amber-300{% else %}text-slate-600{% endif %}">
+            Out for<br>Delivery
+        </p>
+    </div>
+
+    <!-- Connector 4→5 -->
+    <div class="flex-1 h-0.5 mt-6 mx-1 rounded-full
+        {% if active >= 4 %}bg-gradient-to-r from-amber-400 to-emerald-500{% else %}bg-slate-700{% endif %}"></div>
+
+    <!-- Step 5: Delivered -->
+    <div class="flex flex-col items-center flex-1">
+        <div class="step-node relative w-12 h-12 rounded-2xl flex items-center justify-center mb-3
+            {% if active >= 4 %}bg-gradient-to-br from-emerald-500 to-teal-400 border-2 border-emerald-400 shadow-lg shadow-emerald-500/30
+            {% else %}bg-slate-800 border-2 border-slate-700{% endif %}">
+            <svg class="w-6 h-6 relative z-10 {% if active >= 4 %}text-white{% else %}text-slate-600{% endif %}"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+        <p class="text-[11px] font-bold text-center leading-tight
+            {% if active >= 4 %}text-emerald-400{% else %}text-slate-600{% endif %}">
+            Delivered
+        </p>
+    </div>
+
+</div>

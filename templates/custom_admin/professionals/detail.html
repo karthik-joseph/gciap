@@ -1,0 +1,36 @@
+{% extends 'custom_admin/base_admin.html' %}
+{% block page_title %}Professional Details{% endblock %}
+{% block content %}
+<div class="detail-view">
+    <div class="detail-header">
+        <h2>{{ professional.user.username }}</h2>
+        <div class="detail-actions">
+            <a href="{% url 'custom_admin:professional_list' %}" class="btn btn-secondary">Back</a>
+            <a href="{% url 'custom_admin:professional_edit' professional.id %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'custom_admin:professional_delete' professional.id %}" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
+    <div class="detail-sections">
+        <div class="detail-section">
+            <h3>Basic Info</h3>
+            <p><strong>Type:</strong> {{ professional.get_professional_type_display }}</p>
+            <p><strong>Experience:</strong> {{ professional.experience_years }} years</p>
+            <p><strong>Phone:</strong> {{ professional.phone }}</p>
+            <p><strong>Bio:</strong> {{ professional.bio }}</p>
+            <p><strong>Available:</strong> {% if professional.is_available %}Yes{% else %}No{% endif %}</p>
+        </div>
+        <div class="detail-section">
+            <h3>Portfolio ({{ portfolios.count }})</h3>
+            {% for p in portfolios %}
+            <p>{{ p.title }} - {{ p.project_date }}</p>
+            {% endfor %}
+        </div>
+        <div class="detail-section">
+            <h3>Services ({{ pricings.count }})</h3>
+            {% for s in pricings %}
+            <p>{{ s.service_name }} - {{ s.get_budget_level_display }} - ₹{{ s.price }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

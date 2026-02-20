@@ -1,0 +1,157 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block page_title %}Overview Dashboard{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+        <div class="glass-panel p-6 rounded-2xl border border-slate-800/50 hover:border-purple-500/30 transition-all duration-300">
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Total Users</p>
+            <h3 class="text-3xl font-boa leading-none">{{ total_users }}</h3>
+        </div>
+        <div class="glass-panel p-6 rounded-2xl border border-slate-800/50 hover:border-blue-500/30 transition-all duration-300">
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Professionals</p>
+            <h3 class="text-3xl font-boa leading-none">{{ total_professionals }}</h3>
+        </div>
+        <div class="glass-panel p-6 rounded-2xl border border-slate-800/50 hover:border-cyan-500/30 transition-all duration-300">
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Products</p>
+            <h3 class="text-3xl font-boa leading-none">{{ total_products }}</h3>
+        </div>
+        <div class="glass-panel p-6 rounded-2xl border border-slate-800/50 hover:border-indigo-500/30 transition-all duration-300">
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Total Orders</p>
+            <h3 class="text-3xl font-boa leading-none">{{ total_orders }}</h3>
+        </div>
+        <div class="glass-panel p-6 rounded-2xl border border-slate-800/50 hover:border-pink-500/30 transition-all duration-300">
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Total Bookings</p>
+            <h3 class="text-3xl font-boa leading-none">{{ total_bookings }}</h3>
+        </div>
+        <div class="glass-panel p-6 rounded-2xl border border-amber-500/20 bg-amber-500/5 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-2 opacity-20"><svg class="w-8 h-8 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg></div>
+            <p class="text-xs font-bold text-amber-500/70 uppercase tracking-widest mb-1">Pending Bookings</p>
+            <h3 class="text-3xl font-boa leading-none text-amber-500">{{ pending_bookings }}</h3>
+        </div>
+        <div class="glass-panel p-6 rounded-2xl border-rose-500/20 bg-rose-500/5 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-2 opacity-20"><svg class="w-8 h-8 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg></div>
+            <p class="text-xs font-bold text-rose-500/70 uppercase tracking-widest mb-1">Pending Orders</p>
+            <h3 class="text-3xl font-boa leading-none text-rose-500">{{ pending_orders }}</h3>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <!-- Recent Users -->
+        <div class="glass-panel rounded-3xl overflow-hidden border border-slate-800/50">
+            <div class="px-8 py-6 border-b border-slate-800/50 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-200">Recent Users</h3>
+                <a href="{% url 'custom_admin:user_list' %}" class="text-sm font-medium text-slate-500 hover:text-purple-400">View All</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-800/20">
+                        <tr>
+                            <th class="px-8 py-4">Username</th>
+                            <th class="px-8 py-4">Email</th>
+                            <th class="px-8 py-4">Joined</th>
+                            <th class="px-8 py-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-300 divide-y divide-slate-800/50">
+                        {% for user in recent_users %}
+                        <tr class="table-row-hover transition-colors">
+                            <td class="px-8 py-4 font-medium text-slate-200">{{ user.username }}</td>
+                            <td class="px-8 py-4 text-sm">{{ user.email }}</td>
+                            <td class="px-8 py-4 text-sm">{{ user.date_joined|date:"Y-m-d" }}</td>
+                            <td class="px-8 py-4 text-right">
+                                <a href="{% url 'custom_admin:user_detail' user.id %}" class="px-4 py-2 rounded-lg bg-slate-800 text-xs font-semibold hover:bg-slate-700 transition-colors">Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Recent Orders -->
+        <div class="glass-panel rounded-3xl overflow-hidden border border-slate-800/50">
+            <div class="px-8 py-6 border-b border-slate-800/50 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-200">Recent Orders</h3>
+                <a href="{% url 'custom_admin:order_list' %}" class="text-sm font-medium text-slate-500 hover:text-purple-400">View All</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-800/20">
+                        <tr>
+                            <th class="px-8 py-4">Order ID</th>
+                            <th class="px-8 py-4">Amount</th>
+                            <th class="px-8 py-4">Status</th>
+                            <th class="px-8 py-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-300 divide-y divide-slate-800/50">
+                        {% for order in recent_orders %}
+                        <tr class="table-row-hover transition-colors">
+                            <td class="px-8 py-4 font-medium text-slate-200">#{{ order.id }}</td>
+                            <td class="px-8 py-4 text-sm font-bold text-emerald-400">₹{{ order.total_amount }}</td>
+                            <td class="px-8 py-4">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
+                                    {% if order.status == 'pending' %}bg-amber-500/10 text-amber-500
+                                    {% elif order.status == 'delivered' %}bg-emerald-500/10 text-emerald-500
+                                    {% else %}bg-blue-500/10 text-blue-500{% endif %}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-4 text-right">
+                                <a href="{% url 'custom_admin:order_detail' order.id %}" class="px-4 py-2 rounded-lg bg-slate-800 text-xs font-semibold hover:bg-slate-700 transition-colors">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Recent Bookings -->
+        <div class="glass-panel rounded-3xl xl:col-span-2 overflow-hidden border border-slate-800/50">
+            <div class="px-8 py-6 border-b border-slate-800/50 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-200">Recent Bookings</h3>
+                <a href="{% url 'custom_admin:booking_list' %}" class="text-sm font-medium text-slate-500 hover:text-purple-400">View All</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-800/20">
+                        <tr>
+                            <th class="px-8 py-4">ID</th>
+                            <th class="px-8 py-4">User</th>
+                            <th class="px-8 py-4">Professional</th>
+                            <th class="px-8 py-4">Date</th>
+                            <th class="px-8 py-4">Status</th>
+                            <th class="px-8 py-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-300 divide-y divide-slate-800/50">
+                        {% for booking in recent_bookings %}
+                        <tr class="table-row-hover transition-colors">
+                            <td class="px-8 py-4 text-slate-500">#{{ booking.id }}</td>
+                            <td class="px-8 py-4 font-medium text-slate-200">{{ booking.user.username }}</td>
+                            <td class="px-8 py-4 text-sm text-slate-400">{{ booking.professional.user.username }}</td>
+                            <td class="px-8 py-4 text-sm">{{ booking.booking_date }}</td>
+                            <td class="px-8 py-4">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
+                                    {% if booking.status == 'pending' %}bg-amber-500/10 text-amber-500
+                                    {% elif booking.status == 'confirmed' %}bg-blue-500/10 text-blue-500
+                                    {% else %}bg-emerald-500/10 text-emerald-500{% endif %}">
+                                    {{ booking.status }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-4 text-right">
+                                <a href="{% url 'custom_admin:booking_detail' booking.id %}" class="px-4 py-2 rounded-lg bg-slate-800 text-xs font-semibold hover:bg-slate-700 transition-colors">Manage</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

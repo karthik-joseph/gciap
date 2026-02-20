@@ -1,0 +1,64 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="text-center mb-8">
+            <h1 class="animate-item font-boa text-4xl text-gradient mb-4">Checkout</h1>
+            <p class="animate-item text-slate-400">Complete your order</p>
+        </div>
+        
+        <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Shipping Address</label>
+                    <textarea name="shipping_address" rows="4" required
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                        placeholder="Enter your full shipping address..."></textarea>
+                </div>
+                
+                <div class="border-t border-slate-700 pt-6">
+                    <h3 class="text-lg font-semibold text-white mb-4">Order Summary</h3>
+                    
+                    <div class="space-y-3 mb-6">
+                        {% for item in cart_items %}
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-400">{{ item.product.name }} x {{ item.quantity }}</span>
+                            <span class="text-white">₹{{ item.subtotal }}</span>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="border-t border-slate-700 pt-3 flex justify-between text-lg font-semibold">
+                            <span class="text-white">Total</span>
+                            <span class="text-gradient">₹{{ total }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full py-4 rounded-xl gradient-primary text-white font-semibold text-lg hover:opacity-90 transition-all duration-300 btn-glow">
+                    Place Order
+                </button>
+                
+                <a href="{% url 'products:cart_view' %}" class="block w-full py-3 text-center rounded-xl border border-slate-600 text-white font-medium hover:bg-slate-700/50 transition-all duration-300">
+                    Back to Cart
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    anime({
+        targets: '.animate-item',
+        opacity: [0, 1],
+        translateY: [30, 0],
+        duration: 800,
+        delay: anime.stagger(100),
+        easing: 'easeOutExpo'
+    });
+</script>
+{% endblock %}
