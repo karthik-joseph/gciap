@@ -1,22 +1,17 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from .env
-load_dotenv(BASE_DIR / '.env')
-
 
 # ── Security ──────────────────────────────────────────────────────────────────
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-insecure-key-change-in-production')
+SECRET_KEY = "django-insecure-&hn-!s#dqjq4w1#cqqz=+f7i)4!q$x^%8mfu%l^=sq0@+a5phw"
 
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -73,26 +68,13 @@ WSGI_APPLICATION = 'gciap.wsgi.application'
 
 
 # ── Database ───────────────────────────────────────────────────────────────────
-# Production  → DATABASE_URL is set (Render.com PostgreSQL)
-# Local dev   → SQLite (no DATABASE_URL needed)
 
-_database_url = os.environ.get('DATABASE_URL')
-
-if _database_url:
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=_database_url,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 
 # Password validation
@@ -130,7 +112,6 @@ LOGIN_REDIRECT_URL = '/'
 
 
 # ── Production / HTTPS settings (only when DEBUG=False) ───────────────────────
-
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
