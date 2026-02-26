@@ -144,70 +144,111 @@ PRODUCTS_DATA = [
     ('Scandinavian Wood Sofa',        'furniture', 'medium', 45000.00, 15, 'Sweden',  2500.00, 21,
      'scandinavian_wood_sofa.png',
      'Clean-lined three-seater sofa with solid beech wood legs and premium grey fabric upholstery. Perfect for contemporary living rooms.'),
+
+
     ('Curved Off-White Luxury Sofa',  'furniture', 'high',   125000.00, 5, 'Italy',   5000.00, 30,
      'curved_off_white_luxury_sofa.webp',
      'Statement curved sofa in cloud-white boucle fabric with gold-tone legs. A centrepiece for any luxury interior.'),
+
+
     ('Modern Office Chair',           'furniture', 'low',    8500.00,  50, 'India',    300.00,  5,
      'modern_office_chair.png',
      'Ergonomic mesh office chair with adjustable lumbar support, armrests and seat height. Built for all-day comfort.'),
+
+
     ('Italian Leather Recliner',      'furniture', 'high',   125000.00, 4, 'Italy',   5000.00, 30,
      'italian_leather_recliner.png',
      'Full-grain Italian leather recliner with power-reclining mechanism and USB charging port. Timeless luxury.'),
+
+
     ('Bamboo Dining Table (4-Seater)','furniture', 'medium', 28000.00, 12, 'Vietnam', 2000.00, 18,
      'bamboo_dining_table.png',
      'Sustainably sourced bamboo dining table with a honey-finish and matching upholstered chairs.'),
+
+
     ('Adana Sheesham 6-Seater Dining','furniture', 'medium', 42000.00,  8, 'India',   1500.00, 10,
      'adana_grand_sheesham_wood_6-seater_dining_table.jpg',
      'Solid sheesham wood 6-seater dining set with a natural grain finish and cushioned chairs.'),
+
+
     ('Aphamex 10-Seater Dining Set',  'furniture', 'high',   185000.00, 3, 'India',   4000.00, 21,
      'aphamex_10_seater_dining.webp',
      'Grand 10-seater dining table crafted from premium mango wood with a semi-gloss lacquer finish.'),
+
+
     ('Hiro Marble & Wood Dining Set', 'furniture', 'high',   220000.00, 2, 'Italy',   6000.00, 28,
      'buy-dining-furniture-set-hiro-wooden-and-marble-finish-modern-designed-6-seater-dining-table-for-dining-room-by-orange-tree-on-ikiru-online-store-1.webp',
      'Designer 6-seater dining table with an Italian marble top and walnut wood base. A true statement piece.'),
+
+
     ('Acacia Open Bookcase Shelf',    'furniture', 'low',    12500.00, 25, 'India',    500.00,  7,
      'Acacia Wood Open BookCase book shelf.webp',
      'Five-shelf open bookcase in acacia wood with natural cane rattan inserts. Suits both home offices and living rooms.'),
+
+
     ('Blue Velvet Chesterfield Sofa', 'furniture', 'high',    95000.00,  6,'UK',      4500.00, 25,
      'Blue-Velvet-Chesterfield-Sofa_18.jpg',
      'Classic Chesterfield sofa reinterpreted in rich royal-blue velvet with deep button tufting and polished brass feet.'),
+
 
     # ── Decor ──────────────────────────────────────────────────────────────────
     ('Buddha Premium Wall Painting',  'decor', 'medium', 8500.00, 30, 'India',    400.00, 6,
      'Artsense Buddha Premium Wall Painting for Home & Office – Spiritual Wall Art with Golden Premium Floating Frame – 24x36 inches (61x91 cm).jpg',
      '24×36 inch premium canvas print in a golden floating frame. A calming spiritual accent for any room.'),
+
+
     ('Moksha Ceramic Waves Vase',     'decor', 'medium', 4200.00, 40, 'India',    200.00, 4,
      'Moksha Ceramic Waves Vase.jpg',
      'Hand-thrown ceramic vase with organic wave texture in matte sage green. Each piece is one of a kind.'),
+
+
     ('Kintsugi Marble Crack Wall Art','decor', 'high',   22000.00,  8, 'Japan',   2000.00, 20,
      'Kintsugi Style Marble Crack Peel.jpg',
      'Inspired by the Japanese art of Kintsugi — fractured marble panel with real 24K gold fault lines. A collector piece.'),
+
+
     ('Decorative Ribbed Flower Vase', 'decor', 'low',    1800.00, 80, 'India',    150.00,  3,
      'Vase for Flowers Decorative Ribbed Blue Green Plastic Flower Vase.jpg',
      'Set of two ribbed cylindrical vases in ocean blue-green. Lightweight, modern and versatile.'),
+
+
     ('Radiant Flower Vase Set of 2',  'decor', 'low',    2400.00, 60, 'India',    150.00,  3,
      'Radiant Decorative Flower Vase Set of 2.jpg',
      'Slim-neck glass vases with a hand-painted floral motif. Ideal for hallways, dining tables and window sills.'),
+
+
     ('3D Elephant Wall Art',          'decor', 'low',    3500.00, 35, 'India',    200.00,  5,
      '3d_elephant_wall_art.jpg',
      'Handcrafted 3D metal elephant wall art in antique bronze finish. Adds a sculptural, ethnic touch to any wall.'),
+
+
     ('LED Metal Wall Leaves Art',     'decor', 'medium', 6800.00, 20, 'India',    350.00,  6,
      'led_metal_wall_leaves_tree_strutere_wall_art.jpg',
      'Backlit metal tree-of-life wall sculpture with warm LED strip lighting. Creates a dramatic focal point.'),
+
+
     ('3-Light Cluster Ceiling Lamp',  'decor', 'medium', 9500.00, 18, 'India',    500.00,  7,
      '3-Light Cluster Hanging Ceiling Lamp.jpg',
      'Industrial-style cluster pendant with three exposed Edison bulbs on braided cord. Suits cafes, dining rooms and lofts.'),
+
+
     ('Diamond Pendant Light 3-Light', 'decor', 'high',   18500.00,  9, 'Germany', 1500.00, 15,
      'Diamond Pendant Light 3-Lights Metal Cage Industrial Retro Cluster.jpg',
      'Geometric diamond-cage pendant in matt black with three warm-white bulbs. A bold statement for any ceiling.'),
+
+
     ('Retro Rustic Pendant Lamp',     'decor', 'low',    4200.00, 30, 'India',    300.00,  5,
      'Hanging Pendant Light Fixture Lampshade Aluminium Retro Rustic.jpg',
      'Spun-aluminium dome shade in weathered brass. A timeless rustic pendant that works in kitchens and dining rooms alike.'),
+
+
 
     # ── Construction Materials ─────────────────────────────────────────────────
     ('Pearl Grey Floor Marble Tile',  'construction_material', 'high',   3200.00, 500, 'Italy',  1200.00, 18,
      'Pearl Floor Marble - Skyros Marble Tile, Grey Color.jpg',
      'Premium Skyros-grey marble tiles (60×60 cm) with a polished finish. Suitable for floor and wall applications.'),
+
+     
     ('Purple White Marble Floor Slab','construction_material', 'high',  35000.00,  10, 'Turkey', 3000.00, 28,
      'Purple White Marble Slabs For Flooring.jpg',
      'Exotic purple-white marble slabs with dramatic veining. Ideal for accent walls, countertops and luxury flooring.'),
