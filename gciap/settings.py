@@ -6,13 +6,13 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from .env
+# Load .env file for local development
 load_dotenv(BASE_DIR / '.env')
 
 
 # ── Security ──────────────────────────────────────────────────────────────────
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-insecure-key-change-in-production')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-&hn-!s#dqjq4w1#cqqz=+f7i)4!q$x^%8mfu%l^=sq0@+a5phw')
 
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
@@ -73,15 +73,15 @@ WSGI_APPLICATION = 'gciap.wsgi.application'
 
 
 # ── Database ───────────────────────────────────────────────────────────────────
-# Production  → DATABASE_URL is set (Render.com PostgreSQL)
-# Local dev   → SQLite (no DATABASE_URL needed)
+# Set PRODUCTION=True in Render environment variables to use PostgreSQL.
+# Locally, leave PRODUCTION unset (or False) to use SQLite.
 
-_database_url = os.environ.get('DATABASE_URL')
+_is_production = os.environ.get('PRODUCTION', 'False') == 'True'
 
-if _database_url:
+if _is_production:
     DATABASES = {
         'default': dj_database_url.config(
-            default=_database_url,
+            default=os.environ.get('DATABASE_URL'),
             conn_max_age=600,
             conn_health_checks=True,
         )
@@ -130,7 +130,6 @@ LOGIN_REDIRECT_URL = '/'
 
 
 # ── Production / HTTPS settings (only when DEBUG=False) ───────────────────────
-
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True

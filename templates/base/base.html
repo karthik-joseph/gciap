@@ -495,25 +495,10 @@
         }
         startBar(); /* kick off on every page load */
 
-        /* -- Offline banner ------------------------------------- */
-        var banner = document.createElement('div');
-        banner.className = 'sk-offline-banner';
-        banner.innerHTML =
-            '<span class="sk-offline-dot"></span>' +
-            '<span id="sk-banner-msg">No internet connection</span>' +
-            '<button class="sk-retry-btn" onclick="window.GCIAPSkeleton.retry()">&#x21BA; Retry</button>';
-        document.body.appendChild(banner);
-
-        function showBanner(msg) {
-            document.getElementById('sk-banner-msg').textContent = msg || 'No internet connection';
-            banner.classList.add('sk-offline-visible');
-        }
-        function hideBanner() { banner.classList.remove('sk-offline-visible'); }
-
-        /* -- Network monitor ------------------------------------ */
-        window.addEventListener('offline', function() { showBanner('No internet connection'); });
-        window.addEventListener('online',  function() {
-            hideBanner();
+        /* -- Network monitor (banner removed) ------------------- */
+        function showBanner(msg) {}
+        function hideBanner() {}
+        window.addEventListener('online', function() {
             document.querySelectorAll('.sk-section:not(.sk-section-done)').forEach(function(s) {
                 resolveSection(s);
             });
@@ -606,8 +591,8 @@
         window.GCIAPSkeleton = {
             resolve:     resolveSection,
             error:       errorSection,
-            showBanner:  showBanner,
-            hideBanner:  hideBanner,
+            showBanner:  function() {},
+            hideBanner:  function() {},
             retry:       retry,
             autoResolve: autoResolveAll,
             finishBar:   finishBar,

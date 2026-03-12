@@ -1,4 +1,32 @@
+# Python
+*.py[cod]
+*$py.class
+__pycache__/
+
+# Environments
 .env
+.venv
+env/
 venv/
+ENV/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Static and Media
+media/
+
+# Build files
 .build/
-__pycache__
+build/
+dist/
+*.egg-info/
+
+# OS and IDEs
+.DS_Store
+.idea/
+.vscode/
+*.swp
