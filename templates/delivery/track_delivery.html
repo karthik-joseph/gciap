@@ -53,27 +53,37 @@
         <h2 class="text-base font-bold text-slate-400 uppercase tracking-widest mb-8">Delivery Progress</h2>
 
         {% comment %}
-        Determine which stage is active.
-        0 = Order Placed  (always done)
-        1 = Processing / Pending
+        Drive the pipeline off order.status (admin-controlled).
+        0 = Order Placed
+        1 = Processing
         2 = In Transit
         3 = Out for Delivery
         4 = Delivered
         {% endcomment %}
 
-        {% if not delivery %}
+        {% if order.status == 'order_placed' %}
             {% with active=0 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
-        {% elif delivery.status == 'pending' %}
+        {% elif order.status == 'processing' %}
             {% with active=1 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
-        {% elif delivery.status == 'in_transit' %}
+        {% elif order.status == 'in_transit' %}
             {% with active=2 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
-        {% elif delivery.status == 'out_for_delivery' %}
+        {% elif order.status == 'out_for_delivery' %}
             {% with active=3 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
-        {% elif delivery.status == 'delivered' %}
+        {% elif order.status == 'delivered' %}
             {% with active=4 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
+        {% elif order.status == 'cancelled' %}
+            <div class="flex items-center justify-center gap-3 py-6">
+                <div class="w-12 h-12 rounded-2xl bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </div>
+                <p class="text-rose-400 font-bold text-lg">Order Cancelled</p>
+            </div>
         {% else %}
             {% with active=0 %}{% include "delivery/_progress_steps.html" %}{% endwith %}
         {% endif %}
+
 
         <!-- Current location pill -->
         {% if delivery and delivery.current_location %}
