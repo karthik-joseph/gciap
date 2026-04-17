@@ -13,6 +13,7 @@ class Quotation(models.Model):
     project_description = models.TextField()
     budget_estimate = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    admin_notes = models.TextField(blank=True, null=True, help_text="Notes from admin when accepting/rejecting")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

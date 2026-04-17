@@ -541,6 +541,24 @@ def quotation_detail(request, pk):
     })
 
 @staff_member_required
+def quotation_update_status(request, pk):
+    quotation = get_object_or_404(Quotation, pk=pk)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        admin_notes = request.POST.get('admin_notes', '')
+        if new_status in dict(Quotation.STATUS_CHOICES) and new_status != quotation.status:
+            quotation.status = new_status
+            quotation.admin_notes = admin_notes
+            quotation.save()
+            
+            # If quote is accepted and linked to a professional, we might optionally 
+            # create a Booking here, or just let users book them manually.
+            
+            messages.success(request, f'Quotation status updated to "{quotation.get_status_display()}".')
+    return redirect('custom_admin:quotation_detail', pk=pk)
+
+
+@staff_member_required
 def quotation_delete(request, pk):
     quotation = get_object_or_404(Quotation, pk=pk)
     if request.method == 'POST':

@@ -1,26 +1,148 @@
 {% extends 'custom_admin/base_admin.html' %}
-{% block page_title %}Quotation Details{% endblock %}
+
+{% block page_title %}Quotation #{{ quotation.id }}{% endblock %}
+
 {% block content %}
-<div class="detail-view">
-    <div class="detail-header">
+<style>
+    .order-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 900px) { .order-grid { grid-template-columns: 1fr; } }
+
+    .panel {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 0;
+    }
+    .panel h3 {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        margin: 0 0 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #334155;
+    }
+    .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1e293b60; font-size: 14px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: #94a3b8; font-weight: 500; }
+    .info-value { color: #f1f5f9; font-weight: 600; text-align: right; max-width: 60%; }
+
+    .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .05em;
+    }
+    .badge-pending  { background: #422006; color: #facc15; }
+    .badge-accepted { background: #052e16; color: #34d399; }
+    .badge-rejected { background: #4c0519; color: #fb7185; }
+
+    .status-update-box { background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-top: 18px; }
+    .status-update-box label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 10px; }
+    .status-radio-option { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; border: 1px solid #334155; cursor: pointer; transition: all .2s; margin-bottom: 8px;}
+    .status-radio-option:has(input:checked) { border-color: #8b5cf6; background: #1e1b4b; }
+    .status-radio-option:hover { border-color: #475569; background: #1e293b; }
+    .status-radio-option input[type=radio] { accent-color: #8b5cf6; width: 16px; height: 16px; flex-shrink: 0; }
+    .status-radio-option span { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+
+    .admin-notes-textarea {
+        width: 100%;
+        background: #020617;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 12px;
+        color: #e2e8f0;
+        font-size: 14px;
+        margin-bottom: 16px;
+        min-height: 80px;
+        outline: none;
+    }
+    .admin-notes-textarea:focus { border-color: #8b5cf6; }
+
+    .btn-update-status { width: 100%; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; font-weight: 700; font-size: 14px; letter-spacing: .05em; border: none; cursor: pointer; transition: opacity .2s; }
+    .btn-update-status:hover { opacity: .9; }
+
+    .items-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .items-table th { color: #64748b; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 0 0 10px; text-align: left; border-bottom: 1px solid #334155; }
+    .items-table td { padding: 12px 0; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
+    .items-table tr:last-child td { border-bottom: none; }
+    .price-col { text-align: right; font-weight: 600; color: #f1f5f9; }
+
+    .page-header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .page-header-bar h2 { font-size: 24px; font-weight: 700; color: #f1f5f9; margin: 0; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 10px; border: 1px solid #475569; color: #94a3b8; font-size: 13px; font-weight: 600; text-decoration: none; transition: all .2s; }
+    .back-link:hover { border-color: #8b5cf6; color: #f1f5f9; }
+</style>
+
+<div class="page-header-bar">
+    <div>
         <h2>{{ quotation.project_title }}</h2>
-        <a href="{% url 'custom_admin:quotation_list' %}" class="btn btn-secondary">Back</a>
+        <p style="color:#64748b;font-size:13px;margin:4px 0 0;">{{ quotation.user.username }} · Created {{ quotation.created_at|date:"d M Y, H:i" }}</p>
     </div>
-    <div class="detail-section">
-        <p><strong>User:</strong> {{ quotation.user.username }}</p>
-        <p><strong>Budget:</strong> ₹{{ quotation.budget_estimate }}</p>
-        <p><strong>Status:</strong> <span class="status-badge status-{{ quotation.status }}">{{ quotation.get_status_display }}</span></p>
-        <p><strong>Description:</strong> {{ quotation.project_description }}</p>
-        
-        <h3 style="margin-top:20px;">Items</h3>
-        <table>
-            <thead><tr><th>Item</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead>
-            <tbody>
-                {% for i in items %}
-                <tr><td>{{ i.item_name }}</td><td>{{ i.quantity }}</td><td>₹{{ i.unit_price }}</td><td>₹{{ i.total_price }}</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <a href="{% url 'custom_admin:quotation_list' %}" class="back-link">← Back to List</a>
+</div>
+
+<div class="order-grid">
+    <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="panel">
+            <h3>Quotation Information</h3>
+            <div class="info-row"><span class="info-label">Customer</span><span class="info-value">{{ quotation.user.get_full_name|default:quotation.user.username }}</span></div>
+            <div class="info-row"><span class="info-label">Budget</span><span class="info-value text-gradient">₹{{ quotation.budget_estimate }}</span></div>
+            <div class="info-row"><span class="info-label">Professional</span><span class="info-value">{{ quotation.professional.user.get_full_name|default:"None Selected" }}</span></div>
+            <div class="info-row">
+                <span class="info-label">Current Status</span>
+                <span class="info-value"><span class="badge badge-{{ quotation.status }}">{{ quotation.get_status_display }}</span></span>
+            </div>
+            
+            <div style="margin-top:16px;">
+                <p style="color:#94a3b8;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Description</p>
+                <p style="color:#cbd5e1;font-size:13px;line-height:1.6;background:#0f172a;padding:12px;border-radius:8px;border:1px solid #1e293b;">{{ quotation.project_description }}</p>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>Update Status & Reply</h3>
+            <form method="post" action="{% url 'custom_admin:quotation_update_status' quotation.id %}">
+                {% csrf_token %}
+                <div style="margin-bottom:16px;">
+                    {% for value, label in quotation.STATUS_CHOICES %}
+                    <label class="status-radio-option">
+                        <input type="radio" name="status" value="{{ value }}" {% if quotation.status == value %}checked{% endif %}>
+                        <span>{{ label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                
+                <label style="color:#94a3b8;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:block;">Admin Notes (Visible to User)</label>
+                <textarea name="admin_notes" class="admin-notes-textarea" placeholder="Explain the updated budget or why it was rejected/accepted...">{{ quotation.admin_notes|default:"" }}</textarea>
+                
+                <button type="submit" class="btn-update-status">Update Quotation</button>
+            </form>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="panel">
+            <h3>Quotation Items</h3>
+            <table class="items-table">
+                <thead>
+                    <tr><th>Item</th><th style="text-align:center;">Qty</th><th class="price-col">Unit</th><th class="price-col">Total</th></tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.item_name }}</td>
+                        <td style="text-align:center;color:#94a3b8;">{{ item.quantity }}</td>
+                        <td class="price-col text-slate-500 font-normal">₹{{ item.unit_price }}</td>
+                        <td class="price-col">₹{{ item.total_price }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="color:#475569;font-style:italic;padding:16px 0;">No specific items added.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
+

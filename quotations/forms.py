@@ -6,7 +6,7 @@ from .models import Quotation, QuotationItem
 class QuotationForm(forms.ModelForm):
     class Meta:
         model = Quotation
-        fields = ['project_title', 'project_description', 'budget_estimate']
+        fields = ['project_title', 'project_description', 'budget_estimate', 'professional']
         widgets = {
             'project_title': forms.TextInput(attrs={'placeholder': 'Enter project title'}),
             'project_description': forms.Textarea(attrs={'placeholder': 'Describe your project requirements...', 'rows': 4}),

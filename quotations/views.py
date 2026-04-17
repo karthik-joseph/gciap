@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Quotation, QuotationItem
 from .forms import QuotationForm, QuotationItemForm
+from professionals.models import Professional
 
 @login_required
 def quotation_list(request):
@@ -30,7 +31,9 @@ def create_quotation(request):
             return redirect('quotations:quotation_detail', pk=quotation.pk)
     else:
         form = QuotationForm()
-    return render(request, 'quotations/create_quotation.html', {'form': form})
+    
+    professionals = Professional.objects.select_related('user').all()
+    return render(request, 'quotations/create_quotation.html', {'form': form, 'professionals': professionals})
 
 @login_required
 def add_quotation_item(request, pk):
