@@ -111,14 +111,42 @@
                     </div>
 
                     <!-- Email -->
-                    <div class="group">
+                    <div class="group relative">
                         <label for="id_email" class="block text-sm font-bold text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-purple-400 transition-colors">
                             Email Address
                         </label>
-                        <input type="email" name="email" id="id_email" required
-                            value="{{ form.email.value|default:'' }}"
-                            class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300"
-                            placeholder="your@email.com">
+                        <div class="relative">
+                            <input type="email" name="email" id="id_email" required
+                                value="{{ form.email.value|default:'' }}"
+                                class="w-full px-4 py-3 pr-12 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300"
+                                placeholder="your@email.com"
+                                autocomplete="off">
+                            <!-- Status indicator -->
+                            <div id="email-status-icon" class="absolute right-3 top-1/2 -translate-y-1/2 hidden">
+                                <!-- Spinner -->
+                                <svg id="email-spinner" class="w-5 h-5 animate-spin text-purple-400 hidden" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                <!-- Available checkmark -->
+                                <svg id="email-available" class="w-5 h-5 text-emerald-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <!-- Taken X -->
+                                <svg id="email-taken" class="w-5 h-5 text-rose-400 hidden" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Email validation messages -->
+                        <p id="email-error" class="mt-1 text-xs text-rose-400 hidden flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span id="email-error-text"></span>
+                        </p>
+                        <p id="email-success" class="mt-1 text-xs text-emerald-400 hidden flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            Email address is available!
+                        </p>
                         {% if form.email.errors %}
                             <p class="mt-2 text-xs text-rose-400 flex items-center">
                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -560,6 +588,82 @@
         if (!usernameInput.contains(e.target) && !usernameSuggestions.contains(e.target)) {
             usernameSuggestions.classList.add('hidden');
         }
+    });
+
+    // =====================
+    // Email Validation
+    // =====================
+    let emailTimeout = null;
+    const emailInput = document.getElementById('id_email');
+    const emailStatusIcon = document.getElementById('email-status-icon');
+    const emailSpinner = document.getElementById('email-spinner');
+    const emailAvailable = document.getElementById('email-available');
+    const emailTaken = document.getElementById('email-taken');
+    const emailError = document.getElementById('email-error');
+    const emailErrorText = document.getElementById('email-error-text');
+    const emailSuccess = document.getElementById('email-success');
+
+    function resetEmailUI() {
+        emailStatusIcon.classList.add('hidden');
+        emailSpinner.classList.add('hidden');
+        emailAvailable.classList.add('hidden');
+        emailTaken.classList.add('hidden');
+        emailError.classList.add('hidden');
+        emailSuccess.classList.add('hidden');
+        emailInput.classList.remove('border-rose-500', 'border-emerald-500');
+    }
+
+    function isValidEmailFormat(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    emailInput.addEventListener('input', function() {
+        const email = this.value.trim();
+
+        if (emailTimeout) clearTimeout(emailTimeout);
+        resetEmailUI();
+
+        if (!email) return;
+
+        // Client-side format check first
+        if (!isValidEmailFormat(email)) {
+            emailStatusIcon.classList.remove('hidden');
+            emailTaken.classList.remove('hidden');
+            emailError.classList.remove('hidden');
+            emailErrorText.textContent = 'Please enter a valid email address.';
+            emailInput.classList.add('border-rose-500');
+            return;
+        }
+
+        // Show spinner
+        emailStatusIcon.classList.remove('hidden');
+        emailSpinner.classList.remove('hidden');
+
+        // Debounce 400ms before AJAX call
+        emailTimeout = setTimeout(function() {
+            fetch(`/users/check-email/?email=${encodeURIComponent(email)}`)
+                .then(response => response.json())
+                .then(data => {
+                    emailSpinner.classList.add('hidden');
+
+                    if (data.available) {
+                        emailAvailable.classList.remove('hidden');
+                        emailSuccess.classList.remove('hidden');
+                        emailInput.classList.remove('border-rose-500');
+                        emailInput.classList.add('border-emerald-500');
+                    } else {
+                        emailTaken.classList.remove('hidden');
+                        emailError.classList.remove('hidden');
+                        emailErrorText.textContent = data.error;
+                        emailInput.classList.remove('border-emerald-500');
+                        emailInput.classList.add('border-rose-500');
+                    }
+                })
+                .catch(function(err) {
+                    emailSpinner.classList.add('hidden');
+                    console.error('Email check failed:', err);
+                });
+        }, 400);
     });
 
     // =====================

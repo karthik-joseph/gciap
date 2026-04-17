@@ -59,7 +59,23 @@ def check_username(request):
         'matching_users': matching_users
     })
 
+def check_email(request):
+    """AJAX endpoint to check if an email address is already registered."""
+    email = request.GET.get('email', '').strip().lower()
+
+    if not email:
+        return JsonResponse({'available': False, 'error': 'Email is required.'})
+
+    is_taken = User.objects.filter(email__iexact=email).exists()
+
+    return JsonResponse({
+        'available': not is_taken,
+        'error': 'This email address is already registered.' if is_taken else '',
+    })
+
+
 def register(request):
+
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():

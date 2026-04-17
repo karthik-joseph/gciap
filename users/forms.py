@@ -76,6 +76,15 @@ class UserRegistrationForm(UserCreationForm):
         
         return password2
     
+    def clean_email(self):
+        """Ensure the email address is not already registered to another account."""
+        email = self.cleaned_data.get('email', '').strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(
+                "This email address is already registered. Please use a different email or log in."
+            )
+        return email
+
     def clean_phone(self):
         """Validate phone number"""
         phone = self.cleaned_data.get('phone')
@@ -138,6 +147,7 @@ class ProfessionalUpgradeRequestForm(forms.ModelForm):
 
 class AdminUserEditForm(forms.ModelForm):
     """Form for admins to edit user details."""
+
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'is_active']
@@ -147,3 +157,16 @@ class AdminUserEditForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+
+    def clean_email(self):
+        """Ensure the email address is not already used by a *different* user."""
+        email = self.cleaned_data.get('email', '').strip().lower()
+        qs = User.objects.filter(email__iexact=email)
+        # Exclude the user currently being edited so they can keep their own email
+        if self.instance and self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError(
+                "This email address is already in use by another account."
+            )
+        return email
