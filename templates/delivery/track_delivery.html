@@ -102,11 +102,10 @@
     <div class="animate-item bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-700/50 p-8 mb-8">
         <h2 class="text-base font-bold text-slate-400 uppercase tracking-widest mb-6">Tracking Timeline</h2>
 
-        <!-- Always show the "Order Placed" starting event -->
         <div class="relative">
 
             <!-- Order placed — always first -->
-            <div class="flex gap-5 group">
+            <div class="flex gap-5 group timeline-item">
                 <div class="flex flex-col items-center shrink-0">
                     <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border-2 border-emerald-500/50
                                 flex items-center justify-center z-10 group-hover:scale-110 transition-transform">
@@ -114,9 +113,11 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
                     </div>
+                    {% if status_history %}
                     <div class="w-0.5 flex-1 bg-gradient-to-b from-emerald-500/50 to-slate-700/30 mt-1"></div>
+                    {% endif %}
                 </div>
-                <div class="pb-7 flex-1">
+                <div class="{% if status_history %}pb-7{% endif %} flex-1">
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-white font-semibold">Order Placed</p>
@@ -127,12 +128,13 @@
                 </div>
             </div>
 
-            {% if tracking_updates %}
-                {% for update in tracking_updates reversed %}
+            {% if status_history %}
+                {% for entry in status_history %}
                 <div class="flex gap-5 group timeline-item">
                     <div class="flex flex-col items-center shrink-0">
                         <div class="w-10 h-10 rounded-xl
-                                    {% if forloop.last %}gradient-primary ring-2 ring-purple-400/40 shadow-lg shadow-purple-500/20{% else %}bg-slate-700/60 border border-slate-600{% endif %}
+                                    {% if forloop.last %}gradient-primary ring-2 ring-purple-400/40 shadow-lg shadow-purple-500/20
+                                    {% else %}bg-slate-700/60 border border-slate-600{% endif %}
                                     flex items-center justify-center z-10 transition-all duration-300 group-hover:scale-110">
                             {% if forloop.last %}
                             <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
@@ -150,25 +152,25 @@
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="{% if forloop.last %}text-white font-bold{% else %}text-slate-300 font-medium{% endif %}">
-                                    {{ update.status_update }}
+                                    {% if entry.status == 'order_placed' %}Order Placed
+                                    {% elif entry.status == 'processing' %}Processing
+                                    {% elif entry.status == 'in_transit' %}In Transit
+                                    {% elif entry.status == 'out_for_delivery' %}Out for Delivery
+                                    {% elif entry.status == 'delivered' %}Delivered
+                                    {% elif entry.status == 'cancelled' %}Order Cancelled
+                                    {% else %}{{ entry.status }}{% endif %}
                                 </p>
-                                {% if update.location %}
-                                <p class="text-slate-500 text-sm mt-0.5 flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5 text-purple-400/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    </svg>
-                                    {{ update.location }}
-                                </p>
+                                {% if entry.note %}
+                                <p class="text-slate-500 text-sm mt-0.5">{{ entry.note }}</p>
                                 {% endif %}
                             </div>
-                            <span class="text-slate-500 text-xs shrink-0 ml-4">{{ update.timestamp|date:"d M · H:i" }}</span>
+                            <span class="text-slate-500 text-xs shrink-0 ml-4">{{ entry.changed_at|date:"d M · H:i" }}</span>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             {% else %}
-                <!-- No tracking updates yet — show "awaiting shipment" placeholder -->
+                <!-- No status changes yet — show "awaiting update" placeholder -->
                 <div class="flex gap-5">
                     <div class="flex flex-col items-center shrink-0">
                         <div class="w-10 h-10 rounded-xl border-2 border-dashed border-slate-600 flex items-center justify-center animate-pulse">
@@ -176,8 +178,8 @@
                         </div>
                     </div>
                     <div class="flex-1 pt-2">
-                        <p class="text-slate-500 font-medium italic">Awaiting shipment update…</p>
-                        <p class="text-slate-600 text-sm mt-0.5">Tracking details will appear here once dispatched</p>
+                        <p class="text-slate-500 font-medium italic">Awaiting status update…</p>
+                        <p class="text-slate-600 text-sm mt-0.5">Tracking details will appear here once your order is processed</p>
                     </div>
                 </div>
             {% endif %}

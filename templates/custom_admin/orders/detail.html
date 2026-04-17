@@ -128,15 +128,7 @@
     .back-link { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 10px; border: 1px solid #475569; color: #94a3b8; font-size: 13px; font-weight: 600; text-decoration: none; transition: all .2s; }
     .back-link:hover { border-color: #8b5cf6; color: #f1f5f9; }
 
-    /* messages */
-    .msg-success { background: #052e16; border: 1px solid #166534; border-radius: 10px; padding: 10px 16px; color: #34d399; font-size: 13px; font-weight: 600; margin-bottom: 20px; }
 </style>
-
-{% if messages %}
-    {% for msg in messages %}
-    <div class="msg-success">✓ {{ msg }}</div>
-    {% endfor %}
-{% endif %}
 
 <!-- Header -->
 <div class="page-header-bar">

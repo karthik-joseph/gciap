@@ -80,3 +80,22 @@ class OrderItem(models.Model):
     
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
+
+
+class OrderStatusHistory(models.Model):
+    """Records every status change on an order so the tracking timeline is accurate."""
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='status_history')
+    status = models.CharField(max_length=20, choices=Order.ORDER_STATUS)
+    note = models.CharField(max_length=300, blank=True, default='')
+    changed_at = models.DateTimeField(auto_now_add=True)
+    changed_by = models.ForeignKey(
+        'auth.User', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='order_status_changes'
+    )
+
+    class Meta:
+        ordering = ['changed_at']
+
+    def __str__(self):
+        return f"Order {self.order.id} → {self.status} at {self.changed_at:%Y-%m-%d %H:%M}"
+

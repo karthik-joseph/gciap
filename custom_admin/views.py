@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from users.models import UserProfile, ProfessionalUpgradeRequest
 from users.forms import AdminUserEditForm
 from professionals.models import Professional, Portfolio, ServicePricing
-from products.models import Product, Cart, CartItem, Order, OrderItem
+from products.models import Product, Cart, CartItem, Order, OrderItem, OrderStatusHistory
 from quotations.models import Quotation, QuotationItem
 from bookings.models import Booking, Notification
 from delivery.models import Delivery, DeliveryTracking
@@ -448,11 +448,17 @@ def order_detail(request, pk):
 def order_update_status(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method == 'POST':
-        status = request.POST.get('status')
-        if status in dict(Order.ORDER_STATUS):
-            order.status = status
+        new_status = request.POST.get('status')
+        if new_status in dict(Order.ORDER_STATUS) and new_status != order.status:
+            order.status = new_status
             order.save()
-            messages.success(request, f'Order status updated to {status}!')
+            # Record the change in history so the tracking page shows it
+            OrderStatusHistory.objects.create(
+                order=order,
+                status=new_status,
+                changed_by=request.user,
+            )
+            messages.success(request, f'Order status updated to "{order.get_status_display()}".') 
     return redirect('custom_admin:order_detail', pk=pk)
 
 @staff_member_required
